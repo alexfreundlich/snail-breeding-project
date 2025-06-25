@@ -1,172 +1,356 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Never‑Ending Snail Breeding Project</title>
-  
-  <!-- Google Font for headings (optional) -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet">
-  
-  <style>
-    /* ===== CSS CUSTOM PROPERTIES ===== */
-    :root{
-      --accent:#0066ff;           /* timer + links */
-      --font-base:"Helvetica Neue",Arial,sans-serif;
-      --font-heading:'Inter',var(--font-base);
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Never‑Ending Snail Breeding Project</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --accent: #0066ff;
+        --font-base: "Helvetica Neue", Arial, sans-serif;
+        --font-heading: "Inter", var(--font-base);
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: var(--font-base);
+        line-height: 1.6;
+        color: #111;
+        background: url("https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/MacBook%20Pro%2016_%20-%204.jpg?v=1750881277001") center/cover fixed no-repeat;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+      }
+      .page {
+        width: clamp(320px, 90vw, 900px);
+        height: 100vh;
+        background: rgba(255, 255, 255, 0.65);
+        backdrop-filter: blur(4px);
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.25);
+        padding: 2rem 3rem;
+        display: flex;
+        flex-direction: column;
+      }
+      nav {
+        display: flex;
+        justify-content: center;
+        gap: 4rem;
+        margin-bottom: 1.5rem;
+        font-family: var(--font-heading);
+        font-size: 1.35rem;
+        font-weight: 700;
+      }
+      nav a {
+        color: #000;
+        text-decoration: none;
+        position: relative;
+      }
+      nav a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -6px;
+        width: 100%;
+        height: 4px;
+        border-radius: 4px;
+        background: var(--accent);
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      nav a.active::after,
+      nav a:hover::after {
+        opacity: 1;
+      }
+      .header-img {
+        display: block;
+        width: auto;
+        max-width: 300px;
+        max-height: 109px;
+        height: auto;
+        object-fit: cover;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        margin: 0 auto 1.5rem;
+      }
+      #timer {
+        text-align: center;
+        font-family: "Courier New", monospace;
+        font-size: 1rem;
+        letter-spacing: 1px;
+        color: var(--accent);
+        margin-bottom: 2rem;
+      }
+      h2 {
+        margin: 0.5rem 0;
+        font-family: var(--font-heading);
+      }
+      .date {
+        font-size: 0.85rem;
+        color: #555;
+        margin-bottom: 1rem;
+        display: block;
+      }
+      h3 {
+        margin-top: 1.75rem;
+        margin-bottom: 0.5rem;
+        font-family: var(--font-heading);
+      }
+      p {
+        margin-bottom: 1.5rem;
+      } /* increased space between paragraphs */
+      .gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+      }
+      .gallery img {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      }
+      section {
+        display: none;
+        animation: fade 0.3s forwards;
+      }
+      section.active {
+        display: block;
+      }
+      @keyframes fade {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <nav>
+        <a href="#notes" data-target="notes" class="active">Notes</a>
+        <a href="#gallery" data-target="gallery">Gallery</a>
+      </nav>
+      <img
+        class="header-img"
+        src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/Screenshot%202025-06-21%20at%201.56.54%E2%80%AFPM%201.png?v=1750882151549"
+        alt="Snail Breeding Project header image"
+      />
+      <div id="timer">Loading…</div>
 
-    /* ===== GLOBAL RESETS ===== */
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    body{
-      font-family:var(--font-base);
-      line-height:1.6;
-      color:#111;
-      /* Full‑screen background image */
-      background:url('https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/MacBook%20Pro%2016_%20-%204.jpg?v=1750881277001') center/cover fixed no-repeat;
-      min-height:100vh;
-      display:flex;            /* keeps wrapper centered horizontally */
-      justify-content:center;
-    }
-
-    /* ===== LAYOUT WRAPPER ===== */
-    .page{
-      width:clamp(320px,90vw,900px);
-      height:100vh;               /* exact full viewport height */
-      background:rgba(255,255,255,.65);
-      backdrop-filter:blur(4px);
-      box-shadow:0 0 30px rgba(0,0,0,.25);
-      margin:0;                  /* no external spacing */
-      padding:2rem 3rem;         /* restored vertical padding (2rem top & bottom) */
-      display:flex;
-      flex-direction:column;
-    }
-
-    /* ===== MAIN NAVIGATION ===== */
-    nav{
-      display:flex;
-      justify-content:center;
-      gap:4rem;
-      margin-bottom:1.5rem;      /* spacing below nav */
-      font-family:var(--font-heading);
-      font-size:1.35rem;
-      font-weight:700;
-    }
-    nav a{color:#000;text-decoration:none;position:relative;}
-    nav a::after{content:"";position:absolute;left:0;bottom:-6px;width:100%;height:4px;border-radius:4px;background:var(--accent);opacity:0;transition:opacity .3s;}
-    nav a.active::after,nav a:hover::after{opacity:1;}
-
-    /* ===== HEADER IMAGE ===== */
-    .header-img{
-      display:block;
-      width:auto;
-      max-width:300px;
-      max-height:109px;
-      height:auto;
-      object-fit:cover;
-      border-radius:10px;
-      box-shadow:0 2px 6px rgba(0,0,0,.2);
-      margin:0 auto 1.5rem;
-    }
-
-    /* ===== TIMER ===== */
-    #timer{
-      text-align:center;
-      font-family:'Courier New',monospace;
-      font-size:1rem;
-      letter-spacing:1px;
-      color:var(--accent);
-      margin-bottom:2rem;
-    }
-
-    /* ===== NOTES BLOG ===== */
-    article+article{margin-top:2.5rem;}
-    article h2{
-      margin:.25rem 0 .5rem;
-      font-family:var(--font-heading);
-    }
-    .date{font-size:.85rem;color:#555;margin-bottom:.75rem;display:block;}
-
-    /* ===== GALLERY GRID ===== */
-    .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;}
-    .gallery img{width:100%;height:160px;object-fit:cover;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.15);}   
-
-    /* ===== SIMPLE FADE ANIMATION FOR TAB SWITCH ===== */
-    section{display:none;animation:fade .3s forwards;}
-    section.active{display:block;}
-    @keyframes fade{from{opacity:0}to{opacity:1}}
-  </style>
-</head>
-<body>
-  <div class="page">
-
-    <!-- NAVIGATION -->
-    <nav>
-      <a href="#notes" data-target="notes" class="active">Notes</a>
-      <a href="#gallery" data-target="gallery">Gallery</a>
-    </nav>
-
-    <!-- HEADER IMAGE (Place your banner in /images and name it header.jpg or update src) -->
-    <img class="header-img" src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/Screenshot%202025-06-21%20at%201.56.54%E2%80%AFPM%201.png?v=1750878432039" alt="Snail Breeding Project header image">
-
-    <!-- LIVE TIMER -->
-    <div id="timer">Loading…</div>
-
-    <!-- CONTENT TABS -->
-    <section id="notes" class="active" style="flex:1; overflow:auto;">
-      <article>
-        <h2>Notes on the Never‑Ending Snail Breeding Project</h2>
-        <span class="date">Draft · Jun 25 2025</span>
-        <p>This reflection examines six years of a lifelong practice caring for and breeding common garden snails, <em>Cornu aspersum</em>. Given the project’s inchoate status, any written account is necessarily provisional…</p>
-      </article>
-    </section>
-
-    <section id="gallery" style="flex:1; overflow:auto;">
-      <div class="gallery">
-        <img src="images/gallery-01.jpg" alt="Adult snail close‑up">
-        <img src="images/gallery-02.jpg" alt="Hatchlings in terrarium">
-        <img src="images/gallery-03.jpg" alt="Feeding setup">
-      </div>
-    </section>
-
-  </div>
-
-  <script>
-    const startedAt = new Date('2020-06-01T12:00:00-04:00');
-
-    function updateTimer(){
-      const diff = Date.now() - startedAt;
-      const seconds = Math.floor(diff/1000)%60;
-      const minutes = Math.floor(diff/(1000*60))%60;
-      const hours   = Math.floor(diff/(1000*60*60))%24;
-      let days      = Math.floor(diff/(1000*60*60*24));
-      const years  = Math.floor(days/365);
-      days        %= 365;
-      const months = Math.floor(days/30);
-      days        %= 30;
-      document.getElementById('timer').textContent =
-        `${years}y ${months}m ${days}d ${hours}h ${minutes}m ${seconds}s`;
-    }
-    updateTimer();
-    setInterval(updateTimer,1000);
-
-    const links = document.querySelectorAll('nav a');
-    links.forEach(link=>{
-      link.addEventListener('click',e=>{
-        e.preventDefault();
-        const target = link.dataset.target;
-        links.forEach(l=>l.classList.toggle('active',l===link));
-        document.querySelectorAll('section').forEach(sec=>
-          sec.classList.toggle('active',sec.id===target));
-        history.pushState(null,'',`#${target}`);
+      <section id="notes" class="active" style="flex: 1; overflow: auto">
+        <article>
+          <h2>Notes on the Never‑Ending Snail Breeding Project</h2>
+          <span class="date">Updated · Jun 25 2025</span>
+          <p>
+            This reflection examines the first six years of a lifelong practice
+            caring for and breeding common garden snails,
+            <em>Cornu aspersum</em>. Given the project’s inchoate status, any
+            written account is necessarily provisional. Accordingly, this text
+            moves between factual summary and diaristic contemplation while
+            embracing detours from the project’s stated intent along the way.
+            The easiest title, <em>Snail Breeding Project</em>, is replaced by
+            <em>Never‑Ending Snail Breeding Project</em> for this text but there
+            is no fixed title. I’m optimistic that another title will come.
+          </p>
+          <h3>Precursor</h3>
+          <p>
+            Prior to the introduction of the snails were two relevant
+            interactions with exotic pets, which I will describe here. In late
+            2018, during my final year of college, I purchased a Giant
+            Vietnamese centipede, <em>Scolopendra subspinipes</em>, through an
+            online retailer. The animal was never named and its presence in my
+            studio felt physically threatening bordering on regrettable. I can’t
+            stress enough the speed it possessed – I worried it might escape
+            during a feeding, disappearing in the pipes until a studiomate
+            received an excruciating and potentially lethal bite. I wore thick
+            leather construction gloves and used stainless-steel aquarium
+            tweezers to manipulate the fluffy coconut-husk substrate the
+            centipede would burrow into.
+          </p>
+          <p>
+            On two occasions the centipede was fed under questionable
+            circumstances. I sourced green anoles from a pet supply store in
+            Elyria. The manager had me sign a document agreeing that the anoles
+            would not be used to feed another animal. Within hours of feeding,
+            the centipede would leave a perfectly intact anole skeleton. On one
+            occasion, the centipede was featured in a student exhibition, placed
+            in a clear paint can on a stool for observation by attendees. The
+            maintenance and care of the centipede began to eclipse any ephemera
+            related to it in a way I did not yet fully understand. Much of this
+            period consisted in observation. At times it felt like staring into
+            a black hole – presymbolic information whizzing past my skull. On a
+            winter trip back home to Los Angeles, the centipede died on the
+            plane, marking an abrupt end to this particular exploration.
+          </p>
+          <p>
+            After the centipede I moved back in with my parents and prepared to
+            buy a hatchling green anaconda, <em>Eunectes murinus</em>, from an
+            anaconda breeder I had been following online named Meghan Kelley. I
+            put down the deposit and purchased necessary starting materials.
+            There was an exotic pet exposition in Anaheim, CA where we planned
+            the pickup. My priority in owning the snake was creating a sculpture
+            consisting of a non-functional toilet filled with water and a
+            complete female green anaconda defecation inside of it. This would
+            be installed near the far wall of a space, with the other walls
+            hosting mounted live baby snake containers of various morphs paired
+            with customized Starbucks drinks. An example pairing: tall Pumpkin
+            Cream Cold Brew with no ice, extra foam, and an extra shot of
+            espresso with a rainbow boa, <em>Epicrates cenchria</em>, expressing
+            an incomplete dominant Picasso Stripe gene. The sex specificity of
+            the green anaconda put more pressure on things, as the females are
+            significantly larger than the males. The ten year logistical
+            nightmare of owning the giant snake was supposed to ‘figure itself
+            out.’ On the freeway to Anaheim to pick up my selected anaconda, I
+            texted the breeder that I was no longer interested, giving up my
+            deposit and shelving the project.
+          </p>
+          <h3>Snails</h3>
+          <p>
+            Abandoning the anaconda coincided with the unexpected acquisition of
+            garden snails. Nine snails were removed from a friend’s backyard in
+            Encino, which his parents had just begun to treat with poison. The
+            decision was made after an extended period spent with them in one
+            large planter, flipping over leaves revealing tens of snails of
+            different sizes and stages of their life cycle, incredibly small,
+            small, medium, extra large. The whole encounter had this feeling of
+            reunion–a snail is the kind of animal you see just sparingly enough
+            for it to deliver surprise when given a second glance–and on this
+            night in particular I was very overtaken by my impression of the
+            garden snail as an animal species. Leaving his house that night with
+            the snails in tow, the project began.
+          </p>
+          <p>
+            A few things about the snails captivated me. They move faster than
+            their reputation suggests–remarkably fast for their mode of
+            locomotion. These snails’ shells were almost indistinguishable prima
+            facie–I could pick out the darkest and lightest shells, maybe a
+            shell that had been cracked and healed, but that was it. My first
+            impulse was to train my eye to notice more subtle differences
+            between snail shells (the shells have had more to offer as the
+            project progresses). Snail digestion has outlasted the others as a
+            primary fascination. Snails and other gastropods consume their food
+            with an organ called a radula, covered in tooth-like structures that
+            scrape off flecks of food and move them to the esophagus. While
+            their method of digestion resembles that of most animals, snails
+            uniquely produce cellulases to break down plant matter. Though still
+            a subject of debate, snails seem to produce these enzymes themselves
+            rather than employ gut flora, as snail guts mostly contain
+            microorganisms already present in the soil, if any. I was taken by
+            this detail, and inspection of the snail defecation showed something
+            else unique. Vegetal matter is minimally altered–scraped flecks are
+            held together in a tube of mucus highlighting the original
+            pigmentation of the food. Their defecation resembled paint out of
+            the tube.
+          </p>
+          <p>
+            It was clear in the first few days that these snails were the point
+            of convergence for several interests and strategies that had been
+            overtaking me during this period. I sensed this would be a life-long
+            engagement. Bonsai had grown as one of these parallel interests.
+            Yamadori in particular, which involves the pulling of a naturally
+            crippled tree from a mountainside or similar terrain to use as a
+            bonsai starter, felt uncannily similar to the project I had set out
+            on. Bonsai regularly outlive their owners, who pass their trees down
+            for generations. The snail project was in part modeled after this
+            tradition: maintaining an unbroken generational lineage of snails to
+            be cared for indefinitely.
+          </p>
+          <h3>Alien Hybrid Monsters</h3>
+          <p>
+            From the outset, the project has projected a far horizon of
+            biological speculation. I am nurturing the potential for genetic
+            transformation through selective breeding and neglectful care, with
+            the goal of hybridizing these snails with other mollusk
+            species,particularly cephalopods, aiming to produce a new,
+            intelligent mosaic life form capable of novel forms of interspecies
+            communication. Initially framed as an ambient mutation tank,
+            casually irradiating the snails with ionizing waves from bananas and
+            cosmic rays, the project’s goals have since expanded. Through public
+            presentations at San Francisco Art Book Fair and Decentralized Web
+            Camp, the more monstrous ends of the project were teased out. These
+            presentations emphasized the speculative and utopian potentials
+            rather than practical or ethical limitations, positioning the
+            project as a persistent and provocative suggestion to future
+            generations. Around this period, the project resembled an unfunded
+            analogue artificial intelligence startup.
+          </p>
+          <h3>Conclusion</h3>
+          <p>
+            My lifetime with the snails will not coincide with the artwork the
+            project seeks to realize. Only over millennia, if this lineage of
+            snails remains unbroken through speciation or hybridization, then
+            there will be a point along that gradient that would be the artwork.
+            My intent is that a point or points along this population’s
+            evolutionary gradient would become self-evident as an artwork. By
+            this far future point, even within 10,000 years, “art” may be an
+            extinct term. Our own species will have transformed into something
+            else. It becomes unimaginable, beyond speculation. But the most
+            crucial qualities of art will surely persist, its extra-dimensional
+            qualities perceptible by an audience we don’t have words to
+            describe. Whatever it is that replaces art might ring at the same
+            frequency we’ve come to associate with what’s best about art. I must
+            stress that this recurring vision is as susceptible to
+            transformation as the genetic information of the snails themselves
+            during the life of this project.
+          </p>
+        </article>
+      </section>
+      <section id="gallery" style="flex: 1; overflow: auto">
+        <div class="gallery">
+          <img src="images/gallery-01.jpg" alt="Adult snail close-up" />
+          <img src="images/gallery-02.jpg" alt="Hatchlings in terrarium" />
+          <img src="images/gallery-03.jpg" alt="Feeding setup" />
+        </div>
+      </section>
+    </div>
+    <script>
+      const startedAt = new Date("2020-06-01T12:00:00-04:00");
+      function updateTimer() {
+        const diff = Date.now() - startedAt;
+        const s = Math.floor(diff / 1000) % 60,
+          m = Math.floor(diff / 60000) % 60,
+          h = Math.floor(diff / 3600000) % 24;
+        let days = Math.floor(diff / 86400000),
+          yrs = Math.floor(days / 365);
+        days %= 365;
+        let mos = Math.floor(days / 30);
+        days %= 30;
+        document.getElementById(
+          "timer"
+        ).textContent = `${yrs}y ${mos}m ${days}d ${h}h ${m}m ${s}s`;
+      }
+      updateTimer();
+      setInterval(updateTimer, 1000);
+      document.querySelectorAll("nav a").forEach((link) =>
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          const t = link.dataset.target;
+          document
+            .querySelectorAll("nav a")
+            .forEach((l) => l.classList.toggle("active", l === link));
+          document
+            .querySelectorAll("section")
+            .forEach((sec) => sec.classList.toggle("active", sec.id === t));
+          history.pushState(null, "", `#${t}`);
+        })
+      );
+      window.addEventListener("load", () => {
+        const h = location.hash.slice(1),
+          l = document.querySelector(`nav a[data-target="${h}"]`);
+        if (l) l.click();
       });
-    });
-
-    window.addEventListener('load',()=>{
-      const hash = location.hash.slice(1);
-      const link = document.querySelector(`nav a[data-target="${hash}"]`);
-      if(link) link.click();
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>
