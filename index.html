@@ -56,16 +56,17 @@
     nav a::after{content:"";position:absolute;left:0;bottom:-6px;width:100%;height:4px;border-radius:4px;background:var(--accent);opacity:0;transition:opacity .3s;}
     nav a.active::after,nav a:hover::after{opacity:1;}
 
-    /* ===== HEADER IMAGE ===== */
+      /* ===== HEADER IMAGE ===== */
     .header-img{
       display:block;
-      width:100%;
-      max-height:280px;
+      width:auto;          /* allow natural width up to the max below */
+      max-width:300px;     /* user-requested max width */
+      max-height:109px;    /* user-requested max height */
       height:auto;
-      object-fit:cover;
+      object-fit:cover;    /* maintain aspect ratio, crop if needed */
       border-radius:10px;
       box-shadow:0 2px 6px rgba(0,0,0,.2);
-      margin-bottom:1.5rem;
+      margin:0 auto 1.5rem;/* center in column */
     }
 
     /* ===== TIMER ===== */
@@ -105,8 +106,8 @@
       <a href="#gallery" data-target="gallery">Gallery</a>
     </nav>
 
-    <!-- HEADER IMAGE (upload your own file and update src) -->
-    <img class="header-img" src="header.jpg" alt="Snail Breeding Project header image">
+    <!-- HEADER IMAGE (Place your banner in /images and name it header.jpg or update src) -->
+    <img class="header-img" src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/Screenshot%202025-06-21%20at%201.56.54%E2%80%AFPM%201.png?v=1750878432039" alt="Snail Breeding Project header image">
 
     <!-- LIVE TIMER -->
     <div id="timer">Loading…</div>
@@ -123,9 +124,19 @@
     </section>
 
     <section id="gallery">
+      <!--
+        ░▒▓  GALLERY INSTRUCTIONS  ▓▒░
+        Upload all your gallery images into the /images folder.
+        Then list each one as an <img> tag below, adjusting the alt text.
+      -->
       <div class="gallery">
-        <img src="placeholder1.jpg" alt="Snail 1">
-        <img src="placeholder2.jpg" alt="Snail 2">
+        <!-- BEGIN GALLERY GRID -->
+        <img src="images/gallery-01.jpg" alt="Adult snail close‑up">
+        <img src="images/gallery-02.jpg" alt="Hatchlings in terrarium">
+        <img src="images/gallery-03.jpg" alt="Feeding setup">
+        <!-- Add more images by duplicating the line above. Example:
+        <img src="images/gallery-04.jpg" alt="Breeding enclosure overview"> -->
+        <!-- END GALLERY GRID -->
       </div>
     </section>
 
@@ -133,7 +144,7 @@
 
   <script>
     /* ====== CONFIGURE THE PROJECT START DATE/TIME ====== */
-    const startedAt = new Date('2019-06-17T12:28:00-04:00'); // <–– REPLACE ME!
+    const startedAt = new Date('2020-06-01T12:00:00-04:00'); // <–– REPLACE ME!
 
     /* ====== ROLLING TIMER ====== */
     function updateTimer(){
