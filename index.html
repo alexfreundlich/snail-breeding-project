@@ -12,8 +12,6 @@
     /* ===== CSS CUSTOM PROPERTIES ===== */
     :root{
       --accent:#0066ff;           /* timer + links */
-      --bg-edge:#adb5bd;         /* soft vignette */
-      --bg-center:#f5f6f7;       /* page background */
       --font-base:"Helvetica Neue",Arial,sans-serif;
       --font-heading:'Inter',var(--font-base);
     }
@@ -24,22 +22,24 @@
       font-family:var(--font-base);
       line-height:1.6;
       color:#111;
-      /* blurred‑edge backdrop */
-      background:radial-gradient(ellipse at center, var(--bg-center) 0%, var(--bg-center) 60%, var(--bg-edge) 85%, #6c757d 100%);
+      /* Full‑screen background image */
+      background:url('https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/MacBook%20Pro%2016_%20-%204.jpg?v=1750881277001') center/cover fixed no-repeat;
       min-height:100vh;
-      display:flex; /* centers the column vertically on very tall screens */
+      display:flex;            /* keeps wrapper centered horizontally */
       justify-content:center;
     }
 
     /* ===== LAYOUT WRAPPER ===== */
     .page{
       width:clamp(320px,90vw,900px);
-      /* 65% opaque white so the background gently shines through */
+      height:100vh;               /* exact full viewport height */
       background:rgba(255,255,255,.65);
       backdrop-filter:blur(4px);
       box-shadow:0 0 30px rgba(0,0,0,.25);
-      margin:2rem 0 4rem;        /* top/bottom breathing room */
-      padding:2rem 3rem 4rem;
+      margin:0;                  /* no external spacing */
+      padding:2rem 3rem;         /* restored vertical padding (2rem top & bottom) */
+      display:flex;
+      flex-direction:column;
     }
 
     /* ===== MAIN NAVIGATION ===== */
@@ -47,7 +47,7 @@
       display:flex;
       justify-content:center;
       gap:4rem;
-      margin-bottom:1.5rem;
+      margin-bottom:1.5rem;      /* spacing below nav */
       font-family:var(--font-heading);
       font-size:1.35rem;
       font-weight:700;
@@ -56,17 +56,17 @@
     nav a::after{content:"";position:absolute;left:0;bottom:-6px;width:100%;height:4px;border-radius:4px;background:var(--accent);opacity:0;transition:opacity .3s;}
     nav a.active::after,nav a:hover::after{opacity:1;}
 
-      /* ===== HEADER IMAGE ===== */
+    /* ===== HEADER IMAGE ===== */
     .header-img{
       display:block;
-      width:auto;          /* allow natural width up to the max below */
-      max-width:300px;     /* user-requested max width */
-      max-height:109px;    /* user-requested max height */
+      width:auto;
+      max-width:300px;
+      max-height:109px;
       height:auto;
-      object-fit:cover;    /* maintain aspect ratio, crop if needed */
+      object-fit:cover;
       border-radius:10px;
       box-shadow:0 2px 6px rgba(0,0,0,.2);
-      margin:0 auto 1.5rem;/* center in column */
+      margin:0 auto 1.5rem;
     }
 
     /* ===== TIMER ===== */
@@ -113,61 +113,43 @@
     <div id="timer">Loading…</div>
 
     <!-- CONTENT TABS -->
-    <section id="notes" class="active">
+    <section id="notes" class="active" style="flex:1; overflow:auto;">
       <article>
         <h2>Notes on the Never‑Ending Snail Breeding Project</h2>
         <span class="date">Draft · Jun 25 2025</span>
         <p>This reflection examines six years of a lifelong practice caring for and breeding common garden snails, <em>Cornu aspersum</em>. Given the project’s inchoate status, any written account is necessarily provisional…</p>
-        <!-- Add more paragraphs as you like; your entire draft from the sketch can live right here. -->
       </article>
-      <!-- Duplicate <article> blocks for additional posts -->
     </section>
 
-    <section id="gallery">
-      <!--
-        ░▒▓  GALLERY INSTRUCTIONS  ▓▒░
-        Upload all your gallery images into the /images folder.
-        Then list each one as an <img> tag below, adjusting the alt text.
-      -->
+    <section id="gallery" style="flex:1; overflow:auto;">
       <div class="gallery">
-        <!-- BEGIN GALLERY GRID -->
         <img src="images/gallery-01.jpg" alt="Adult snail close‑up">
         <img src="images/gallery-02.jpg" alt="Hatchlings in terrarium">
         <img src="images/gallery-03.jpg" alt="Feeding setup">
-        <!-- Add more images by duplicating the line above. Example:
-        <img src="images/gallery-04.jpg" alt="Breeding enclosure overview"> -->
-        <!-- END GALLERY GRID -->
       </div>
     </section>
 
   </div>
 
   <script>
-    /* ====== CONFIGURE THE PROJECT START DATE/TIME ====== */
-    const startedAt = new Date('2020-06-01T12:00:00-04:00'); // <–– REPLACE ME!
+    const startedAt = new Date('2020-06-01T12:00:00-04:00');
 
-    /* ====== ROLLING TIMER ====== */
     function updateTimer(){
-      const now = new Date();
-      let diff  = now - startedAt; // ms
-
+      const diff = Date.now() - startedAt;
       const seconds = Math.floor(diff/1000)%60;
       const minutes = Math.floor(diff/(1000*60))%60;
       const hours   = Math.floor(diff/(1000*60*60))%24;
       let days      = Math.floor(diff/(1000*60*60*24));
-
       const years  = Math.floor(days/365);
       days        %= 365;
       const months = Math.floor(days/30);
       days        %= 30;
-
       document.getElementById('timer').textContent =
         `${years}y ${months}m ${days}d ${hours}h ${minutes}m ${seconds}s`;
     }
     updateTimer();
     setInterval(updateTimer,1000);
 
-    /* ====== TAB HANDLING ====== */
     const links = document.querySelectorAll('nav a');
     links.forEach(link=>{
       link.addEventListener('click',e=>{
@@ -180,13 +162,10 @@
       });
     });
 
-    /* On page‑load respect any #hash in URL */
     window.addEventListener('load',()=>{
       const hash = location.hash.slice(1);
-      if(hash){
-        const link = document.querySelector(`nav a[data-target="${hash}"]`);
-        if(link) link.click();
-      }
+      const link = document.querySelector(`nav a[data-target="${hash}"]`);
+      if(link) link.click();
     });
   </script>
 </body>
