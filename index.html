@@ -1,72 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- 
-      This is an HTML comment
-      You can write text in a comment and the content won't be visible in the page
-    -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Never‑Ending Snail Breeding Project</title>
+  
+  <!-- Google Font for headings (optional) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ===== CSS CUSTOM PROPERTIES ===== */
+    :root{
+      --accent:#0066ff;           /* timer + links */
+      --bg-edge:#adb5bd;         /* soft vignette */
+      --bg-center:#f5f6f7;       /* page background */
+      --font-base:"Helvetica Neue",Arial,sans-serif;
+      --font-heading:'Inter',var(--font-base);
+    }
 
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" href="https://glitch.com/favicon.ico" />
+    /* ===== GLOBAL RESETS ===== */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      font-family:var(--font-base);
+      line-height:1.6;
+      color:#111;
+      /* blurred‑edge backdrop */
+      background:radial-gradient(ellipse at center, var(--bg-center) 0%, var(--bg-center) 60%, var(--bg-edge) 85%, #6c757d 100%);
+      min-height:100vh;
+      display:flex; /* centers the column vertically on very tall screens */
+      justify-content:center;
+    }
 
-    <!--
-      This is the page head - it contains info the browser uses
-      Like the title, which appears on the browser tab but not inside the page
-      Further down you'll see the content that displays in the page
-    -->
-    <title>Hello World!</title>
+    /* ===== LAYOUT WRAPPER ===== */
+    .page{
+      width:clamp(320px,90vw,900px);
+      /* 65% opaque white so the background gently shines through */
+      background:rgba(255,255,255,.65);
+      backdrop-filter:blur(4px);
+      box-shadow:0 0 30px rgba(0,0,0,.25);
+      margin:2rem 0 4rem;        /* top/bottom breathing room */
+      padding:2rem 3rem 4rem;
+    }
 
-    <!-- The website stylesheet -->
-    <link rel="stylesheet" href="/style.css" />
+    /* ===== MAIN NAVIGATION ===== */
+    nav{
+      display:flex;
+      justify-content:center;
+      gap:4rem;
+      margin-bottom:1.5rem;
+      font-family:var(--font-heading);
+      font-size:1.35rem;
+      font-weight:700;
+    }
+    nav a{color:#000;text-decoration:none;position:relative;}
+    nav a::after{content:"";position:absolute;left:0;bottom:-6px;width:100%;height:4px;border-radius:4px;background:var(--accent);opacity:0;transition:opacity .3s;}
+    nav a.active::after,nav a:hover::after{opacity:1;}
 
-    <!-- The website JavaScript file -->
-    <script src="/script.js" defer></script>
-  </head>
-  <body>
-    <!--
-      The body includes the content you see in the page
-      Each element is defined using tags, like this <div></div>
-      The attributes like class="wrapper" let us style elements in the CSS
-    -->
-    <div class="wrapper">
-      <div class="content" role="main">
-        <h1 class="title">Hello World!</h1>
-        <img
-          src="https://cdn.glitch.com/a9975ea6-8949-4bab-addb-8a95021dc2da%2Fillustration.svg?v=1618177344016"
-          class="illustration"
-          alt="Editor illustration"
-          title="Click the image!"
-        />
-        <div class="instructions">
-          <h2>Using this project</h2>
-          <p>
-            This is the Glitch <strong>Hello Website</strong> project. You can
-            use it to build your own site. Check out the code in the editor and open
-            the <span class="fileopener" data-file="TODO.md" data-line="0"
-              >TODO</span> for next steps!
-          </p>
-          <!--  🚧 TODO: ADD BUTTON HERE -->
+    /* ===== HEADER IMAGE ===== */
+    .header-img{
+      display:block;
+      width:100%;
+      max-height:280px;
+      height:auto;
+      object-fit:cover;
+      border-radius:10px;
+      box-shadow:0 2px 6px rgba(0,0,0,.2);
+      margin-bottom:1.5rem;
+    }
 
-          <!-- Once you've added the button from TODO.md, click it in the page -->
-          <!-- Check out the function in script.js to see how it works -->
-        </div>
+    /* ===== TIMER ===== */
+    #timer{
+      text-align:center;
+      font-family:'Courier New',monospace;
+      font-size:1rem;
+      letter-spacing:1px;
+      color:var(--accent);
+      margin-bottom:2rem;
+    }
+
+    /* ===== NOTES BLOG ===== */
+    article+article{margin-top:2.5rem;}
+    article h2{
+      margin:.25rem 0 .5rem;
+      font-family:var(--font-heading);
+    }
+    .date{font-size:.85rem;color:#555;margin-bottom:.75rem;display:block;}
+
+    /* ===== GALLERY GRID ===== */
+    .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;}
+    .gallery img{width:100%;height:160px;object-fit:cover;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.15);}   
+
+    /* ===== SIMPLE FADE ANIMATION FOR TAB SWITCH ===== */
+    section{display:none;animation:fade .3s forwards;}
+    section.active{display:block;}
+    @keyframes fade{from{opacity:0}to{opacity:1}}
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- NAVIGATION -->
+    <nav>
+      <a href="#notes" data-target="notes" class="active">Notes</a>
+      <a href="#gallery" data-target="gallery">Gallery</a>
+    </nav>
+
+    <!-- HEADER IMAGE (upload your own file and update src) -->
+    <img class="header-img" src="header.jpg" alt="Snail Breeding Project header image">
+
+    <!-- LIVE TIMER -->
+    <div id="timer">Loading…</div>
+
+    <!-- CONTENT TABS -->
+    <section id="notes" class="active">
+      <article>
+        <h2>Notes on the Never‑Ending Snail Breeding Project</h2>
+        <span class="date">Draft · Jun 25 2025</span>
+        <p>This reflection examines six years of a lifelong practice caring for and breeding common garden snails, <em>Cornu aspersum</em>. Given the project’s inchoate status, any written account is necessarily provisional…</p>
+        <!-- Add more paragraphs as you like; your entire draft from the sketch can live right here. -->
+      </article>
+      <!-- Duplicate <article> blocks for additional posts -->
+    </section>
+
+    <section id="gallery">
+      <div class="gallery">
+        <img src="placeholder1.jpg" alt="Snail 1">
+        <img src="placeholder2.jpg" alt="Snail 2">
       </div>
-    </div>
-    <!-- The footer holds our remix button — you can keep or delete it ✂ -->
-    <footer class="footer">
-      <div class="links"></div>
-      <a
-        class="btn--remix"
-        target="_top"
-        href="https://glitch.com/edit/#!/remix/glitch-hello-website"
-      >
-        <img
-          src="https://cdn.glitch.com/605e2a51-d45f-4d87-a285-9410ad350515%2FLogo_Color.svg?v=1618199565140"
-          alt=""
-        />
-        Remix on Glitch
-      </a>
-    </footer>
-  </body>
+    </section>
+
+  </div>
+
+  <script>
+    /* ====== CONFIGURE THE PROJECT START DATE/TIME ====== */
+    const startedAt = new Date('2019-06-17T12:28:00-04:00'); // <–– REPLACE ME!
+
+    /* ====== ROLLING TIMER ====== */
+    function updateTimer(){
+      const now = new Date();
+      let diff  = now - startedAt; // ms
+
+      const seconds = Math.floor(diff/1000)%60;
+      const minutes = Math.floor(diff/(1000*60))%60;
+      const hours   = Math.floor(diff/(1000*60*60))%24;
+      let days      = Math.floor(diff/(1000*60*60*24));
+
+      const years  = Math.floor(days/365);
+      days        %= 365;
+      const months = Math.floor(days/30);
+      days        %= 30;
+
+      document.getElementById('timer').textContent =
+        `${years}y ${months}m ${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }
+    updateTimer();
+    setInterval(updateTimer,1000);
+
+    /* ====== TAB HANDLING ====== */
+    const links = document.querySelectorAll('nav a');
+    links.forEach(link=>{
+      link.addEventListener('click',e=>{
+        e.preventDefault();
+        const target = link.dataset.target;
+        links.forEach(l=>l.classList.toggle('active',l===link));
+        document.querySelectorAll('section').forEach(sec=>
+          sec.classList.toggle('active',sec.id===target));
+        history.pushState(null,'',`#${target}`);
+      });
+    });
+
+    /* On page‑load respect any #hash in URL */
+    window.addEventListener('load',()=>{
+      const hash = location.hash.slice(1);
+      if(hash){
+        const link = document.querySelector(`nav a[data-target="${hash}"]`);
+        if(link) link.click();
+      }
+    });
+  </script>
+</body>
 </html>
