@@ -11,10 +11,12 @@
     <style>
       :root {
         --accent: #0066ff;
-        --font-base: 'Helvetica Neue', Arial, sans-serif;
-        --font-heading: 'Inter', var(--font-base);
+        --font-base: "Helvetica Neue", Arial, sans-serif;
+        --font-heading: "Inter", var(--font-base);
       }
-      *, *::before, *::after {
+      *,
+      *::before,
+      *::after {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
@@ -23,7 +25,8 @@
         font-family: var(--font-base);
         line-height: 1.6;
         color: #111;
-        background: url('https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/MacBook%20Pro%2016_%20-%204.jpg?v=1750881277001') center/cover fixed no-repeat;
+        background: url("https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/MacBook%20Pro%2016_%20-%204.jpg?v=1750881277001")
+          center/cover fixed no-repeat;
         min-height: 100vh;
         display: flex;
         justify-content: center;
@@ -46,15 +49,15 @@
         object-fit: cover;
         border-radius: 10px;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-        margin-bottom: 1rem;
+        margin-bottom: 2rem;
       }
       #timer {
-        font-family: 'Courier New', monospace;
+        font-family: "Courier New", monospace;
         font-size: 1rem;
         font-weight: bold;
         letter-spacing: 1px;
         color: var(--accent);
-        margin-bottom: 1rem;
+        margin-bottom: 1.75rem;
       }
       nav {
         font-family: var(--font-heading);
@@ -70,7 +73,7 @@
         position: relative;
       }
       nav a::after {
-        content: '';
+        content: "";
         position: absolute;
         left: 0;
         bottom: -6px;
@@ -101,7 +104,7 @@
         font-family: var(--font-heading);
       }
       p {
-        margin-bottom: .75rem;
+        margin-bottom: 0.75rem;
       }
       /* Uniform section top padding */
       section {
@@ -129,7 +132,14 @@
         margin-bottom: 1rem;
         break-inside: avoid;
       }
-      @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+      @keyframes fade {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
       #back-to-top {
         position: absolute;
         bottom: 1rem;
@@ -510,13 +520,34 @@
             src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/eggs.jpg?v=1750898215669"
             alt="Snail eggs in coconut-husk substrate"
           />
-           <img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-camille.jpg?v=1750962828016" alt="Camille with snail on thumb" />
-          <img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snails-paper-towel.jpg?v=1750898287227" alt="Placeholder image 2" />
-          <img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-shell-info.jpg?v=1750962831006" alt="Placeholder image 3" />
-          <img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/baby-snail.jpg?v=1750962821621" alt="Placeholder image 4" />
-          <img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-with-defecation.jpg?v=1750962835030" alt="Placeholder image 4" />
-          <img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snails-canvas.jpg?v=1750962837668" alt="Placeholder image 4" />
-          <img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snails-in-hand.jpg?v=1750962840732" alt="Placeholder image 4" />
+          <img
+            src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-camille.jpg?v=1750962828016"
+            alt="Camille with snail on thumb"
+          />
+          <img
+            src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snails-paper-towel.jpg?v=1750898287227"
+            alt="Placeholder image 2"
+          />
+          <img
+            src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-shell-info.jpg?v=1750962831006"
+            alt="Placeholder image 3"
+          />
+          <img
+            src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/baby-snail.jpg?v=1750962821621"
+            alt="Placeholder image 4"
+          />
+          <img
+            src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-with-defecation.jpg?v=1750962835030"
+            alt="Placeholder image 4"
+          />
+          <img
+            src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snails-canvas.jpg?v=1750962837668"
+            alt="Placeholder image 4"
+          />
+          <img
+            src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snails-in-hand.jpg?v=1750962840732"
+            alt="Placeholder image 4"
+          />
         </div>
       </section>
     </div>
