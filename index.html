@@ -110,15 +110,14 @@
       } /* increased space between paragraphs */
       .gallery {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(150px, 2fr));
         gap: 1rem;
       }
       .gallery img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 10px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        display: block; /* remove any inline-image gaps */
+        width: 100%; /* fill the column width */
+        height: auto; /* height adjusts to keep the original aspect ratio */
+        border-radius: 4px;
       }
       section {
         display: none;
@@ -150,7 +149,11 @@
       />
       <div id="timer">Loading…</div>
 
-      <section id="notes" class="active" style="flex: 1; overflow: auto; overscroll-behavior: none">
+      <section
+        id="notes"
+        class="active"
+        style="flex: 1; overflow: auto; overscroll-behavior: none"
+      >
         <article>
           <h3><b>Notes on the Never‑Ending Snail Breeding Project</b></h3>
           <p>
@@ -396,10 +399,22 @@
           <span class="date">Updated · Jun 25 2025</span>
         </article>
       </section>
-      <section id="gallery" style="flex: 1; overflow: auto; overscroll-behavior: none">
+      <section
+        id="gallery"
+        style="flex: 1; overflow: auto; overscroll-behavior: none"
+      >
         <div class="gallery">
-          <img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/centipede-can.jpg?v=1750887319704" alt="Adult snail close-up" />
-          <img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/dent.jpg?v=1750887458980" alt="Hatchlings in terrarium" />
+          <img
+            src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/centipede-can.jpg?v=1750887319704"
+            alt="Giant Vietnamese Centipede in a clear acrylic paint can"
+          />
+          <img
+            src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/dent.jpg?v=1750887458980"
+            alt="Dent the snail in 2019"
+          />
+          <img src="images/gallery-03.jpg" alt="Feeding setup" />
+          <img src="images/gallery-03.jpg" alt="Feeding setup" />
+          <img src="images/gallery-03.jpg" alt="Feeding setup" />
           <img src="images/gallery-03.jpg" alt="Feeding setup" />
         </div>
       </section>
