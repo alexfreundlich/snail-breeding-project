@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Never‑Ending Snail Breeding Project</title>
+    <title>Never-Ending Snail Breeding Project</title>
+    <!-- Preconnect and preload fonts for faster text rendering -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap"
       rel="stylesheet"
@@ -50,6 +53,7 @@
         border-radius: 10px;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
         margin-bottom: 2rem;
+        loading: lazy;
       }
       #timer {
         font-family: "Courier New", monospace;
@@ -579,7 +583,7 @@
         </div>
       </section>
     </div>
-    <script>
+    <script defer>
       const startedAt = new Date("2019-06-17T00:32:00-04:00");
       function updateTimer() {
         const diff = Date.now() - startedAt;
@@ -595,38 +599,38 @@
           "timer"
         ).textContent = `${yrs}y ${mos}m ${days}d ${h}h ${m}m ${s}s ${String(
           ms
-        ).padStart(3, "0")}ms`;
+        ).padStart(3, '0')}ms`;
       }
-      updateTimer();
-      setInterval(updateTimer, 1);
+      document.addEventListener('DOMContentLoaded', () => {
+        updateTimer();
+        setInterval(updateTimer, 100);
 
-      document.querySelectorAll("nav a").forEach((link) =>
-        link.addEventListener("click", (e) => {
-          e.preventDefault();
-          const t = link.dataset.target;
-          document
-            .querySelectorAll("nav a")
-            .forEach((l) => l.classList.toggle("active", l === link));
-          document
-            .querySelectorAll("section")
-            .forEach((sec) => sec.classList.toggle("active", sec.id === t));
-          history.pushState(null, "", `#${t}`);
-        })
-      );
+        document.querySelectorAll("nav a").forEach((link) =>
+          link.addEventListener("click", (e) => {
+            e.preventDefault();
+            const t = link.dataset.target;
+            document
+              .querySelectorAll("nav a")
+              .forEach((l) => l.classList.toggle("active", l === link));
+            document
+              .querySelectorAll("section")
+              .forEach((sec) => sec.classList.toggle("active", sec.id === t));
+            history.pushState(null, "", `#${t}`);
+          })
+        );
 
-      const page = document.querySelector(".page");
-      const backBtn = document.getElementById("back-to-top");
-      page.addEventListener("scroll", () => {
-        backBtn.style.display = page.scrollTop > 300 ? "block" : "none";
-      });
-      backBtn.addEventListener("click", () => {
-        page.scrollTo({ top: 0, behavior: "smooth" });
-      });
+        const page = document.querySelector(".page");
+        const backBtn = document.getElementById("back-to-top");
+        page.addEventListener("scroll", () => {
+          backBtn.style.display = page.scrollTop > 300 ? "block" : "none";
+        });
+        backBtn.addEventListener("click", () => {
+          page.scrollTo({ top: 0, behavior: "smooth" });
+        });
 
-      window.addEventListener("load", () => {
-        const h = location.hash.slice(1),
-          l = document.querySelector(`nav a[data-target="${h}"]`);
-        if (l) l.click();
+        const h = location.hash.slice(1);
+        const initialLink = document.querySelector(`nav a[data-target="${h}"]`);
+        if (initialLink) initialLink.click();
       });
     </script>
   </body>
