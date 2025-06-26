@@ -37,10 +37,12 @@
         padding: 2rem 3rem;
         display: flex;
         flex-direction: column;
+        overflow-y: auto;
+        position: relative;
       }
-     .header {
+      .header {
         display: flex;
-        align-items: flex-start;
+        align-items: center;
         flex-wrap: wrap;
         gap: 1rem;
         margin-bottom: 1.5rem;
@@ -48,13 +50,9 @@
       .header-img {
         max-width: 300px;
         max-height: 109px;
-        width: auto;
-        height: auto;
         object-fit: cover;
         border-radius: 10px;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-        margin: 0;
-        margin-bottom: 1.5rem;
       }
       nav {
         font-family: var(--font-heading);
@@ -63,6 +61,7 @@
         display: flex;
         gap: 4rem;
         margin-left: auto;
+        margin-top: 0;
       }
       nav a {
         color: #000;
@@ -86,7 +85,6 @@
         opacity: 1;
       }
       #timer {
-        text-align: left;
         font-family: 'Courier New', monospace;
         font-size: 1rem;
         font-weight: bold;
@@ -94,46 +92,27 @@
         color: var(--accent);
         margin-bottom: 1rem;
       }
-      h2 {
-        margin: 0.25rem 0;
-        font-family: var(--font-heading);
-      }
-      .date {
-        font-size: 0.85rem;
-        color: #555;
-        margin-bottom: 1rem;
-        display: block;
-      }
-      h3 {
-        margin-top: 1.75rem;
-        margin-bottom: 0.25rem;
-        font-family: var(--font-heading);
-      }
-      p {
-        margin-bottom: 1.5rem;
-      }
-      .gallery {
-        column-width: 150px;
-        column-gap: 1rem;
-      }
-      .gallery img {
-        display: inline-block;
-        width: 100%;
-        height: auto;
-        border-radius: 4px;
-        margin-bottom: 1rem;
-        break-inside: avoid;
-      }
-      section {
+      h2 { margin: 0.25rem 0; font-family: var(--font-heading); }
+      .date { font-size: 0.85rem; color: #555; margin-bottom: 1rem; display: block; }
+      h3 { margin-top: 1.75rem; margin-bottom: 0.25rem; font-family: var(--font-heading); }
+      p { margin-bottom: 1.5rem; }
+      .gallery { column-width: 150px; column-gap: 1rem; }
+      .gallery img { display: inline-block; width: 100%; height: auto; border-radius: 4px; margin-bottom: 1rem; break-inside: avoid; }
+      section { display: none; animation: fade 0.3s forwards; }
+      section.active { display: block; }
+      @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+      #back-to-top {
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        background: var(--accent);
+        border: none;
+        color: #fff;
+        padding: 0.5rem;
+        border-radius: 50%;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
         display: none;
-        animation: fade 0.3s forwards;
-      }
-      section.active {
-        display: block;
-      }
-      @keyframes fade {
-        from { opacity: 0; }
-        to   { opacity: 1; }
       }
     </style>
   </head>
@@ -500,24 +479,25 @@
         </div>
       </section>
     </div>
-    <script>
+     <script>
       const startedAt = new Date("2019-06-17T00:32:00-04:00");
       function updateTimer() {
         const diff = Date.now() - startedAt;
-        const s = Math.floor(diff / 1000) % 60,
-          m = Math.floor(diff / 60000) % 60,
-          h = Math.floor(diff / 3600000) % 24;
-        let days = Math.floor(diff / 86400000),
-          yrs = Math.floor(days / 365);
-        days %= 365;
-        let mos = Math.floor(days / 30);
+        const yrs = Math.floor(diff / 31536000000);
+        let days = Math.floor((diff % 31536000000) / 86400000);
+        const mos = Math.floor(days / 30);
         days %= 30;
+        const h = Math.floor((diff % 86400000) / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        const ms = diff % 1000;
         document.getElementById(
           "timer"
-        ).textContent = `${yrs}y ${mos}m ${days}d ${h}h ${m}m ${s}s`;
+        ).textContent = `${yrs}y ${mos}m ${days}d ${h}h ${m}m ${s}s ${String(ms).padStart(3, '0')}ms`;
       }
       updateTimer();
-      setInterval(updateTimer, 1000);
+      setInterval(updateTimer, 1);
+
       document.querySelectorAll("nav a").forEach((link) =>
         link.addEventListener("click", (e) => {
           e.preventDefault();
@@ -531,6 +511,16 @@
           history.pushState(null, "", `#${t}`);
         })
       );
+
+      const page = document.querySelector(".page");
+      const backBtn = document.getElementById("back-to-top");
+      page.addEventListener("scroll", () => {
+        backBtn.style.display = page.scrollTop > 300 ? "block" : "none";
+      });
+      backBtn.addEventListener("click", () => {
+        page.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
       window.addEventListener("load", () => {
         const h = location.hash.slice(1),
           l = document.querySelector(`nav a[data-target="${h}"]`);
