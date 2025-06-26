@@ -8,15 +8,13 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap"
       rel="stylesheet"
     />
-    <style>
+       <style>
       :root {
         --accent: #0066ff;
-        --font-base: "Helvetica Neue", Arial, sans-serif;
-        --font-heading: "Inter", var(--font-base);
+        --font-base: 'Helvetica Neue', Arial, sans-serif;
+        --font-heading: 'Inter', var(--font-base);
       }
-      *,
-      *::before,
-      *::after {
+      *, *::before, *::after {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
@@ -25,8 +23,7 @@
         font-family: var(--font-base);
         line-height: 1.6;
         color: #111;
-        background: url("https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/MacBook%20Pro%2016_%20-%204.jpg?v=1750881277001")
-          center/cover fixed no-repeat;
+        background: url('https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/MacBook%20Pro%2016_%20-%204.jpg?v=1750881277001') center/cover fixed no-repeat;
         min-height: 100vh;
         display: flex;
         justify-content: center;
@@ -43,19 +40,13 @@
         overflow-y: auto;
         position: relative;
       }
-      .header {
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-      }
       .header-img {
         max-width: 300px;
         max-height: 109px;
         object-fit: cover;
         border-radius: 10px;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        margin-bottom: 1rem;
       }
       nav {
         font-family: var(--font-heading);
@@ -63,8 +54,7 @@
         font-weight: 700;
         display: flex;
         gap: 4rem;
-        margin-left: auto;
-        margin-top: 0;
+        margin: 0 0 1rem 0;
       }
       nav a {
         color: #000;
@@ -72,7 +62,7 @@
         position: relative;
       }
       nav a::after {
-        content: "";
+        content: '';
         position: absolute;
         left: 0;
         bottom: -6px;
@@ -88,33 +78,19 @@
         opacity: 1;
       }
       #timer {
-        font-family: "Courier New", monospace;
+        font-family: 'Courier New', monospace;
         font-size: 1rem;
-        /*font-weight: bold;*/
+        font-weight: bold;
         letter-spacing: 1px;
         color: var(--accent);
-        margin-top: 1rem;
         margin-bottom: 1rem;
       }
-      h2 {
-        margin: 0.25rem 0;
-        font-family: var(--font-heading);
-      }
-      .date {
-        font-size: 0.85rem;
-        color: #555;
-        margin-bottom: 1rem;
-        display: block;
-      }
-      h3 {
-        margin-top: 1.75rem;
-        margin-bottom: 0.25rem;
-        font-family: var(--font-heading);
-      }
-      p {
-        margin-bottom: 1.5rem;
-      }
+      h2 { margin: 0.25rem 0; font-family: var(--font-heading); }
+      .date { font-size: 0.85rem; color: #555; margin-bottom: 1rem; display: block; }
+      h3 { margin-top: 1.75rem; margin-bottom: 0.25rem; font-family: var(--font-heading); }
+      p { margin-bottom: 1.5rem; }
       .gallery {
+        margin-top: 1.75rem;
         column-width: 150px;
         column-gap: 1rem;
       }
@@ -126,21 +102,9 @@
         margin-bottom: 1rem;
         break-inside: avoid;
       }
-      section {
-        display: none;
-        animation: fade 0.3s forwards;
-      }
-      section.active {
-        display: block;
-      }
-      @keyframes fade {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
-      }
+      section { display: none; animation: fade 0.3s forwards; }
+      section.active { display: block; }
+      @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
       #back-to-top {
         position: absolute;
         bottom: 1rem;
