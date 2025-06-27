@@ -1,98 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Never-Ending Snail Breeding Project</title>
-
-  <!-- favicon -->
-  <link rel="icon" href="…/Snail Favicon.png" type="image/x-icon"/>
-
-  <!-- preconnect + Rubik import -->
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap"
-    rel="stylesheet"
-  />
-
-  <style>
-    :root {
-      --accent: #0066ff;
-      /* all non-timer text now uses Rubik */
-      --font-base: 'Rubik', Arial, sans-serif;
-    }
-    *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
-
-    /* body inherits Rubik */
-    body {
-      font-family: var(--font-base);
-      line-height: 1.6;
-      color: #202020;
-      background: url("…/MacBook Pro 16 …jpg") center/cover fixed no-repeat;
-      min-height:100vh;
-      display:flex;
-      justify-content:center;
-    }
-
-    .page {
-      width: clamp(320px,90vw,900px);
-      height:100vh;
-      background: rgba(255,255,255,0.75);
-      backdrop-filter: blur(4px);
-      box-shadow: 0 0 30px rgba(0,0,0,0.25);
-      padding:2rem 3rem;
-      display:flex;
-      flex-direction:column;
-      overflow-y:auto;
-      position:relative;
-      isolation:isolate; /* keep your hole-punch working */
-    }
-
-    .header-img { /* …your existing styles… */ }
-
-    /* timer still wants a monospace font */
-    #timer {
-      font-family: 'Courier New', monospace;
-      font-size:1rem;
-      font-weight:bold;
-      letter-spacing:1px;
-      color: var(--accent);
-      margin-bottom:1.75rem;
-    }
-
-    /* tabs now Rubik too */
-    nav {
-      font-family: var(--font-base);
-      font-size:1.35rem;
-      font-weight:700;
-      display:flex;
-      gap:4rem;
-      margin:0 0 1rem;
-    }
-    nav a {
-      color:#202020;
-      text-decoration:none;
-      position:relative;
-    }
-    nav a::after {
-      content:'';
-      position:absolute;
-      left:0; bottom:-6px;
-      width:100%; height:4px;
-      border-radius:4px;
-      background: var(--accent);
-      mix-blend-mode: destination-out;
-      opacity:0;
-      transition: opacity 0.3s;
-    }
-    nav a:hover::after,
-    nav a.active::after {
-      opacity:1;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Never-Ending Snail Breeding Project</title>
+    <link
+      rel="icon"
+      href="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/Snail%20Favicon.png?v=1750973734782"
+      type="image/x-icon"
+    />
+    <!-- Preconnect and preload fonts for faster text rendering -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --accent: #0066ff;
+        --font-base: "Rubik", Arial, sans-serif;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: var(--font-base);
+        line-height: 1.6;
+        color: #202020;
+        background: url("https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/MacBook%20Pro%2016_%20-%204.jpg?v=1750881277001")
+          center/cover fixed no-repeat;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+      }
+      .page {
+        width: clamp(320px, 90vw, 900px);
+        height: 100vh;
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(4px);
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.25);
+        padding: 2rem 3rem;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        position: relative;
+      }
+      .header-img {
+        max-width: 300px;
+        max-height: 109px;
+        object-fit: cover;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        margin-bottom: 2rem;
+        loading: lazy;
+      }
+      #timer {
+        font-family: "Rubik",;
+        font-size: rem;
+        font-weight: bold;
+        letter-spacing: 1px;
+        color: var(--accent);
+        margin-bottom: 1.75rem;
+      }
+      nav {
+        font-family: var(--font-base);
+        font-size: 1.35rem;
+        font-weight: 700;
+        display: flex;
+        gap: 4rem;
+        margin: 0 0 1rem 0;
+      }
+      nav a {
+        color: #202020;
+        text-decoration: none;
+        position: relative;
+      }
+      nav a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -6px;
+        width: 100%;
+        height: 4px;
+        border-radius: 4px;
+        background: var(--accent);
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      nav a.active::after,
+      nav a:hover::after {
+        opacity: 1;
+      }
       h2 {
         margin: 0.25rem 0;
-        font-family: var(--font-heading);
+        font-family: var(--font-base);
       }
       .date {
         font-size: 0.85rem;
@@ -103,7 +109,7 @@
       h3 {
         margin-top: 1.75rem;
         margin-bottom: 0.25rem;
-        font-family: var(--font-heading);
+        font-family: var(--font-base);
       }
       p {
         margin-bottom: 0.75rem;
@@ -134,6 +140,7 @@
         margin-bottom: 1rem;
         break-inside: avoid;
       }
+      .support {}
       @keyframes fade {
         from {
           opacity: 0;
@@ -181,6 +188,7 @@
       <nav>
         <a href="#notes" data-target="notes" class="active">Notes</a>
         <a href="#gallery" data-target="gallery">Gallery</a>
+        <a href="#support" data-target="support">Support</a>
       </nav>
       <section id="notes" class="active" style="flex: 1">
         <article>
