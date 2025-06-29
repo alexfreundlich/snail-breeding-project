@@ -170,13 +170,19 @@
       }
     </style>
   </head>
-  <body>
-    <div class="page">
-      <img
-        class="header-img"
-        src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/Screenshot%202025-06-21%20at%201.56.54%E2%80%AFPM%201.png?v=1750882151549"
-        alt="Clock Snail Bonsai Ionizing Radiation on Carrot Slice"
-      />
+ <body>
+  <div class="page">
+    <!-- Landing screen -->
+    <section id="landing">
+      <p class="landing-text">I’ve learned of snails loose in my studio</p>
+    </section>
+
+    <!-- Your real site -->
+    <div id="main">
+      <img class="header-img"
+           src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/Screenshot%202025-06-21%20at%201.56.54%E2%80%AFPM%201.png?v=1750882151549"
+           alt="Clock Snail Bonsai…"/>
+
       <div id="timer">Loading…</div>
       <nav>
         <a href="#notes" data-target="notes" class="active">Notes</a>
@@ -619,17 +625,32 @@
         </div>
       </section>
     </div>
-    <script defer>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const page    = document.querySelector('.page');
+      const landing = document.getElementById('landing');
+      const main    = document.getElementById('main');
+
+      // 3a) reset any scroll-offset
+      page.scrollTop = 0;
+
+      // 2) clicking the landing screen reveals your real site
+      landing.addEventListener('click', () => {
+        landing.style.display = 'none';
+        main.style.display    = 'flex';
+      });
+
+      // Timer logic (unchanged except for millisecond accuracy)
       const startedAt = new Date("2019-06-17T00:32:00-04:00");
       function updateTimer() {
         const diff = Date.now() - startedAt;
-        const yrs = Math.floor(diff / 31536000000);
-        let days = Math.floor((diff % 31536000000) / 86400000);
-        const mos = Math.floor(days / 30);
+        const yrs  = Math.floor(diff / 31536000000);
+        let   days = Math.floor((diff % 31536000000) / 86400000);
+        const mos  = Math.floor(days / 30);
         days %= 30;
-        const h = Math.floor((diff % 86400000) / 3600000);
-        const m = Math.floor((diff % 3600000) / 60000);
-        const s = Math.floor((diff % 60000) / 1000);
+        const h  = Math.floor((diff % 86400000) / 3600000);
+        const m  = Math.floor((diff % 3600000) / 60000);
+        const s  = Math.floor((diff % 60000) / 1000);
         const ms = diff % 1000;
         document.getElementById(
           "timer"
@@ -637,37 +658,23 @@
           ms
         ).padStart(3, "0")}ms`;
       }
-      document.addEventListener("DOMContentLoaded", () => {
-        updateTimer();
-        setInterval(updateTimer, 1);
+      updateTimer();
+      setInterval(updateTimer, 1);
 
-        document.querySelectorAll("nav a").forEach((link) =>
-          link.addEventListener("click", (e) => {
-            e.preventDefault();
-            const t = link.dataset.target;
-            document
-              .querySelectorAll("nav a")
-              .forEach((l) => l.classList.toggle("active", l === link));
-            document
-              .querySelectorAll("section")
-              .forEach((sec) => sec.classList.toggle("active", sec.id === t));
-            history.pushState(null, "", `#${t}`);
-          })
-        );
-
-        const page = document.querySelector(".page");
-        const backBtn = document.getElementById("back-to-top");
-        page.addEventListener("scroll", () => {
-          backBtn.style.display = page.scrollTop > 300 ? "block" : "none";
-        });
-        backBtn.addEventListener("click", () => {
-          page.scrollTo({ top: 0, behavior: "smooth" });
-        });
-
-        const h = location.hash.slice(1);
-        const initialLink = document.querySelector(`nav a[data-target="${h}"]`);
-        if (initialLink) initialLink.click();
-      });
-    </script>
-  </body>
+      // Tab switching
+      document.querySelectorAll("nav a").forEach(link =>
+        link.addEventListener("click", e => {
+          e.preventDefault();
+          const target = link.dataset.target;
+          document.querySelectorAll("nav a")
+                  .forEach(a => a.classList.toggle("active", a===link));
+          document.querySelectorAll("section")
+                  .forEach(sec => sec.classList.toggle("active", sec.id===target));
+          // ensure we’re scrolled to the top of .page
+          page.scrollTop = 0;
+        })
+      );
+    });
+  </script>
+</body>
 </html>
