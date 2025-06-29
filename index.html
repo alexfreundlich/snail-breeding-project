@@ -682,14 +682,17 @@
           <!-- Ko-fi overlay button -->
           <script src="https://storage.ko-fi.com/cdn/scripts/overlay-widget.js"></script>
           <script>
-            kofiWidgetOverlay.draw("snailbreedingproject", {
-              type: "shop",
-              item: "48176b8cd3", // e.g. "snail-defecation-artwork"
-              text: "Get yours – $40",
-              color: "#ff7f00",
-              accent: "#0066ff",
-              fullscreen: false,
-            });
+            window.addEventListener('DOMContentLoaded', () => {
+              kofiWidgetOverlay.draw('snailbreedingproject', {
+                type:  'shop',
+                item:  '48176b8cd3',   // <— EXACT slug
+                text:  'Get yours – $40',
+                color: '#ff7f00',
+                accent:'#0066ff',
+                position:'right',
+                fullscreen:false
+              });
+              });
           </script>
           <noscript>
             <p>
