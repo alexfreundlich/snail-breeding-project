@@ -150,10 +150,10 @@
         display: none;
         animation: fade 0.3s forwards;
         padding-top: 1.75rem;
-        flex: 1;
       }
       section.active {
         display: block;
+        padding-bottom: 3rem;
       }
       /* remove extra margin on the first heading in notes */
       section#notes h3:first-of-type {
@@ -217,7 +217,7 @@
           <a href="#gallery" data-target="gallery">Gallery</a>
           <a href="#support" data-target="support">Support</a>
         </nav>
-        <section id="notes" class="active" style="flex: 1">
+        <section id="notes" class="active">
           <article>
             <h3>Notes on the Never‑Ending Snail Breeding Project</h3>
             <p>
@@ -491,7 +491,7 @@
             <span class="date">Updated · Jun 29 2025</span>
           </article>
         </section>
-        <section id="gallery" style="flex: 1">
+        <section id="gallery">
           <div class="gallery">
             <img
               src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/centipede-can.jpg?v=1750887319704"
@@ -658,33 +658,51 @@
       </div>
     </div>
     <script>
+      // 0) Prevent the browser from restoring scroll on reload/back-forward
+      if ("scrollRestoration" in history) {
+        history.scrollRestoration = "manual";
+      }
+
+      // 1) Match .page height to the real inner viewport (fixes 100vh quirks)
+      function syncPageHeight() {
+        const page = document.querySelector(".page");
+        page.style.height = window.innerHeight + "px";
+      }
+
+      // 2) On pageshow (initial load, reload, or back nav), re-sync & scroll to top
+      window.addEventListener("pageshow", () => {
+        syncPageHeight();
+        document.querySelector(".page").scrollTop = 0;
+      });
+
       document.addEventListener("DOMContentLoaded", () => {
+        // initial sync
+        syncPageHeight();
+
         const page = document.querySelector(".page");
         const landing = document.getElementById("landing");
         const main = document.getElementById("main");
 
-        // reset scroll on load
-        page.scrollTop = 0;
-
-        // landing click → reveal main
+        // Landing click → reveal main, clear hash, re-sync & reset scroll
         landing.addEventListener("click", () => {
           landing.style.display = "none";
           main.style.display = "flex";
-          // remove any #hash so the browser won’t auto-jump
+
+          // Remove any #fragment so the browser cannot auto-jump
           history.replaceState(
             null,
             "",
             window.location.pathname + window.location.search
           );
 
-          landing.style.display = "none";
-          main.style.display = "flex";
-
-          // ensure .page is scrolled to top
-          page.scrollTop = 0;
+          // Wait a tick, then re-sync height & reset scroll
+          setTimeout(() => {
+            syncPageHeight();
+            page.scrollTop = 0;
+          }, 50);
         });
 
-        // timer setup
+        // Timer
         const startedAt = new Date("2019-06-17T00:32:00-04:00");
         function updateTimer() {
           const diff = Date.now() - startedAt;
@@ -705,7 +723,7 @@
         updateTimer();
         setInterval(updateTimer, 1);
 
-        // tab switching
+        // Tab switching
         document.querySelectorAll("nav a").forEach((link) => {
           link.addEventListener("click", (e) => {
             e.preventDefault();
@@ -722,6 +740,10 @@
           });
         });
       });
+
+      // Also keep in sync after all resources load & on any resize
+      window.addEventListener("load", syncPageHeight);
+      window.addEventListener("resize", syncPageHeight);
     </script>
   </body>
 </html>
