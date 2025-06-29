@@ -59,16 +59,19 @@
         display: flex;
         flex-direction: column;
         overflow-y: auto;
-        position: relative;
+        position: relative; /* ensure landing can absolute-position itself */
       }
 
       /* --- Landing screen --- */
       #landing {
+        position: absolute;
+        inset: 0; /* top:0; right:0; bottom:0; left:0 */
+        background: rgba(255, 255, 255, 0.6); /* a semi-opaque white layer */
+        backdrop-filter: blur(8px); /* blur everything behind it */
         display: flex;
         align-items: center;
         justify-content: center;
-        text-align: center;
-        flex: 1; /* fill entire .page */
+        z-index: 10; /* sit on top of #main */
         cursor: pointer;
       }
       #landing .landing-text {
@@ -78,7 +81,6 @@
 
       /* --- Main content (hidden until landing click) --- */
       #main {
-        display: none;
         flex: 1; /* allow scrolling */
         flex-direction: column;
       }
@@ -161,14 +163,16 @@
       }
 
       /* --- Gallery as a grid, left→right ordering --- */
-       .gallery {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 1rem;
+      .gallery {
+        column-width: 150px;
+        column-gap: 1rem;
       }
       .gallery img {
+        display: inline-block;
         width: 100%;
         height: auto;
+        margin-bottom: 1rem;
+        break-inside: avoid;
         border-radius: 4px;
       }
 
@@ -192,6 +196,12 @@
         }
         #timer {
           font-size: 0.875rem;
+        }
+        #landing .landing-text {
+          font-size: 1.25rem; /* down from 2rem so it fits in one line */
+          line-height: 1.2; /* tighten up the line height */
+          white-space: nowrap; /* prevent any wrapping */
+          overflow-wrap: normal; /* no hyphens or forced breaks */
         }
       }
     </style>
@@ -255,13 +265,13 @@
               perfectly intact anole skeleton. One of these skeletons was used
               to make a painting. On one occasion, the centipede itself was
               featured in a student exhibition in front of a tree I had cut
-              down, placed in a clear paint can on a stool for
-              observation by attendees. The maintenance and care of the
-              centipede began to eclipse any other purpose I had for it in a way
-              I did not yet fully understand. Much of this period consisted in
-              observation. At times it felt like staring into a black hole. On a
-              winter trip back home to Los Angeles, the centipede died on the
-              plane, marking an abrupt end to this particular exploration.
+              down, placed in a clear paint can on a stool for observation by
+              attendees. The maintenance and care of the centipede began to
+              eclipse any other purpose I had for it in a way I did not yet
+              fully understand. Much of this period consisted in observation. At
+              times it felt like staring into a black hole. On a winter trip
+              back home to Los Angeles, the centipede died on the plane, marking
+              an abrupt end to this particular exploration.
             </p>
             <p>
               After this period with the centipede, I moved back in with my
@@ -658,44 +668,39 @@
       </div>
     </div>
     <script>
-      // 0) Prevent the browser from restoring scroll on reload/back-forward
+      // Prevent automatic scroll restoration on reload/back navigation
       if ("scrollRestoration" in history) {
         history.scrollRestoration = "manual";
       }
 
-      // 1) Match .page height to the real inner viewport (fixes 100vh quirks)
+      // Sync .page height to the true inner viewport (fixes mobile 100vh quirks)
       function syncPageHeight() {
-        const page = document.querySelector(".page");
-        page.style.height = window.innerHeight + "px";
+        document.querySelector(".page").style.height =
+          window.innerHeight + "px";
       }
 
-      // 2) On pageshow (initial load, reload, or back nav), re-sync & scroll to top
+      // On pageshow (initial, reload, back/forward), re-sync & reset scroll
       window.addEventListener("pageshow", () => {
         syncPageHeight();
         document.querySelector(".page").scrollTop = 0;
       });
 
       document.addEventListener("DOMContentLoaded", () => {
-        // initial sync
         syncPageHeight();
 
         const page = document.querySelector(".page");
         const landing = document.getElementById("landing");
         const main = document.getElementById("main");
 
-        // Landing click → reveal main, clear hash, re-sync & reset scroll
+        // Landing click → show main, clear hash, re-sync & scroll top
         landing.addEventListener("click", () => {
           landing.style.display = "none";
           main.style.display = "flex";
-
-          // Remove any #fragment so the browser cannot auto-jump
           history.replaceState(
             null,
             "",
             window.location.pathname + window.location.search
           );
-
-          // Wait a tick, then re-sync height & reset scroll
           setTimeout(() => {
             syncPageHeight();
             page.scrollTop = 0;
@@ -723,7 +728,7 @@
         updateTimer();
         setInterval(updateTimer, 1);
 
-        // Tab switching
+        // Tabs → show Notes / Gallery / Support
         document.querySelectorAll("nav a").forEach((link) => {
           link.addEventListener("click", (e) => {
             e.preventDefault();
@@ -741,7 +746,7 @@
         });
       });
 
-      // Also keep in sync after all resources load & on any resize
+      // Also re-sync on full load and any resize
       window.addEventListener("load", syncPageHeight);
       window.addEventListener("resize", syncPageHeight);
     </script>
