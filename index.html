@@ -62,24 +62,6 @@
         position: relative; /* ensure landing can absolute-position itself */
       }
 
-      /* --- Landing screen --- */
-      #landing {
-        position: absolute;
-        inset: 0; /* top:0; right:0; bottom:0; left:0 */
-        background: rgba(255, 255, 255, 0.6); /* a semi-opaque white layer */
-        backdrop-filter: blur(8px); /* blur everything behind it */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 10; /* sit on top of #main */
-        cursor: pointer;
-      }
-      #landing .landing-text {
-        font-size: 2rem;
-        line-height: 1.4;
-        color: 1b1b1b;
-      }
-
       /* --- Main content (hidden until landing click) --- */
       #main {
         flex: 1; /* allow scrolling */
@@ -163,6 +145,17 @@
         margin-top: 0;
       }
 
+      /* home message */
+      #welcome,
+      #home .welcome {
+        font-size: 2rem;
+        line-height: 1.4;
+        margin-bottom: 2.5rem;
+        color: #1b1b1b;
+        display: flex;
+        justify-content: center;
+      }
+
       /* --- Gallery as a grid, left→right ordering --- */
       .gallery {
         column-width: 150px;
@@ -209,11 +202,6 @@
   </head>
   <body>
     <div class="page">
-      <!-- Landing screen -->
-      <section id="landing">
-        <p class="landing-text">I’ve learned of snails loose in my studio</p>
-      </section>
-
       <!-- Your real site -->
       <div id="main">
         <img
@@ -228,6 +216,9 @@
           <a href="#gallery" data-target="gallery">Gallery</a>
           <a href="#support" data-target="support">Support</a>
         </nav>
+        <section id="home" class="active">
+          <p class="welcome">I’ve learned of snails loose in my studio</p>
+        </section>
         <section id="notes">
           <article>
             <h3>Notes on the Never‑Ending Snail Breeding Project</h3>
@@ -527,7 +518,7 @@
               project's continuity and its potential transformation across
               generations. There is a possibility of this.
             </p>
-            <span class="date">Updated · Jun 29 2025</span>
+            <span class="date">Updated · Jun 30 2025</span>
           </article>
         </section>
         <section id="gallery">
@@ -746,47 +737,28 @@
       </div>
     </div>
     <script>
-      // Prevent automatic scroll restoration on reload/back navigation
-      if ("scrollRestoration" in history) {
-        history.scrollRestoration = "manual";
-      }
+      /* -----------------------------------------------------------
+   Never-Ending Snail Breeding Project — main script
+   (2025-06-30 rewrite: no landing page, hash-based routing)
+   ----------------------------------------------------------- */
+      (() => {
+        "use strict";
 
-      // Sync .page height to the true inner viewport (fixes mobile 100vh quirks)
-      function syncPageHeight() {
-        document.querySelector(".page").style.height =
-          window.innerHeight + "px";
-      }
+        /* ——— Prevent automatic scroll restoration ——— */
+        if ("scrollRestoration" in history) {
+          history.scrollRestoration = "manual";
+        }
 
-      // On pageshow (initial, reload, back/forward), re-sync & reset scroll
-      window.addEventListener("pageshow", () => {
-        syncPageHeight();
-        document.querySelector(".page").scrollTop = 0;
-      });
-
-      document.addEventListener("DOMContentLoaded", () => {
-        syncPageHeight();
-
+        /* ——— Helpers ——— */
         const page = document.querySelector(".page");
-        const landing = document.getElementById("landing");
-        const main = document.getElementById("main");
+        function syncPageHeight() {
+          page.style.height = window.innerHeight + "px";
+        }
 
-        // Landing click → show main, clear hash, re-sync & scroll top
-        landing.addEventListener("click", () => {
-          landing.style.display = "none";
-          main.style.display = "flex";
-          history.replaceState(
-            null,
-            "",
-            window.location.pathname + window.location.search
-          );
-          setTimeout(() => {
-            syncPageHeight();
-            page.scrollTop = 0;
-          }, 50);
-        });
-
-        // Timer
+        /* ——— Breeding-timer ——— */
         const startedAt = new Date("2019-06-17T00:32:00-04:00");
+        const timerEl = document.getElementById("timer");
+
         function updateTimer() {
           const diff = Date.now() - startedAt;
           const yrs = Math.floor(diff / 31536000000);
@@ -797,36 +769,45 @@
           const m = Math.floor((diff % 3600000) / 60000);
           const s = Math.floor((diff % 60000) / 1000);
           const ms = diff % 1000;
-          document.getElementById(
-            "timer"
-          ).textContent = `${yrs}y ${mos}m ${days}d ${h}h ${m}m ${s}s ${String(
+          timerEl.textContent = `${yrs}y ${mos}m ${days}d ${h}h ${m}m ${s}s ${String(
             ms
           ).padStart(3, "0")}ms`;
         }
-        updateTimer();
-        setInterval(updateTimer, 1);
 
-        // Tabs → show Notes / Gallery / Support
-        document.querySelectorAll("nav a").forEach((link) => {
-          link.addEventListener("click", (e) => {
-            e.preventDefault();
-            const target = link.dataset.target;
-            document
-              .querySelectorAll("nav a")
-              .forEach((a) => a.classList.toggle("active", a === link));
-            document
-              .querySelectorAll("section")
-              .forEach((sec) =>
-                sec.classList.toggle("active", sec.id === target)
-              );
-            page.scrollTop = 0;
-          });
+        /* ——— Simple hash-router ——— */
+        const sections = Array.from(document.querySelectorAll("section"));
+        const links = Array.from(document.querySelectorAll("nav a"));
+        const validIds = ["home", "notes", "gallery", "support"]; // update if you add more
+
+        function showSection() {
+          const id = validIds.includes(location.hash.slice(1))
+            ? location.hash.slice(1)
+            : "home";
+
+          sections.forEach((sec) =>
+            sec.classList.toggle("active", sec.id === id)
+          );
+
+          links.forEach((a) =>
+            a.classList.toggle("active", a.getAttribute("href") === "#" + id)
+          );
+
+          page.scrollTop = 0;
+        }
+
+        /* ——— Boot ——— */
+        window.addEventListener("DOMContentLoaded", () => {
+          syncPageHeight();
+          showSection();
+          updateTimer();
+          setInterval(updateTimer, 1); // update every millisecond
         });
-      });
 
-      // Also re-sync on full load and any resize
-      window.addEventListener("load", syncPageHeight);
-      window.addEventListener("resize", syncPageHeight);
+        window.addEventListener("hashchange", showSection);
+        window.addEventListener("resize", syncPageHeight);
+        window.addEventListener("load", syncPageHeight);
+        window.addEventListener("pageshow", syncPageHeight);
+      })();
     </script>
   </body>
 </html>
