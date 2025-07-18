@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -68,15 +68,15 @@
         flex-direction: column;
       }
 
-      .header-img{
-  width:100%;
-  max-width:300px;
-  aspect-ratio: 300 / 109;   /* ≈2.75:1  – reserves the same 109 px */
-  object-fit:cover;
-  border-radius:10px;
-  box-shadow:0 2px 6px rgba(0,0,0,.2);
-  margin-bottom:2rem;
-}
+     .header-img {
+        max-width: 300px;
+        max-height: 109px;
+        object-fit: cover;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        margin-bottom: 2rem;
+        loading: lazy;
+      }
 
       #timer {
         font-family: var(--font-timer);
@@ -172,6 +172,13 @@
         break-inside: avoid;
         border-radius: 4px;
       }
+      #support img.product-card{
+        width:100%;
+        max-width:360px;          /* pick any max you like */
+        aspect-ratio: 3 / 4;      /* 360 × 480 → 3:4   */
+        border-radius:8px;
+        height:auto;              /* stays responsive */
+}
 
       @keyframes fade {
         from {
