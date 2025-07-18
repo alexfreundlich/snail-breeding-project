@@ -201,7 +201,7 @@
           overflow-wrap: normal; /* no hyphens or forced breaks */
         }
         .gallery { column-width: 80px; }   /* try 110–130px to taste */
-        .gallery img    { border-radius: 0.5px; }   /* or 0 for square corners */
+        .gallery img    { border-radius: 2px; }   /* or 0 for square corners */
          #support        { padding-bottom: 2.5rem; }   /* adjust to taste */
       }
     </style>
@@ -885,6 +885,9 @@
           updateTimer();
           setInterval(updateTimer, 1); // update every millisecond
         });
+        window.addEventListener("load", () => {
+  page.scrollTop = 0;          // ensure header/tabs are visible
+});
 
         window.addEventListener("hashchange", showSection);
         window.addEventListener("resize", syncPageHeight);
