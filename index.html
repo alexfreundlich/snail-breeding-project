@@ -892,6 +892,13 @@
           updateTimer();
           setInterval(updateTimer, 1); // update every millisecond
         });
+        window.addEventListener('load', () => {
+  requestAnimationFrame(() => {      // 1st frame (browser jump usually lands here)
+    requestAnimationFrame(() => {    // 2nd frame → now safe to reset
+      page.scrollTop = 0;            // header/timer/nav are visible again
+    });
+  });
+});
 
         window.addEventListener("hashchange", showSection);
         window.addEventListener("resize", syncPageHeight);
