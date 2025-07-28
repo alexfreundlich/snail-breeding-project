@@ -159,6 +159,28 @@
         justify-content: center;
       }
 
+      .retro-bar{
+  background:#c0c0c0;
+  border-top:2px solid #fff;
+  border-left:2px solid #fff;
+  border-right:2px solid #6b6b6b;
+  border-bottom:2px solid #6b6b6b;
+  display:flex;
+  align-items:center;
+  gap:1.5rem;
+  padding:0.35rem 0.75rem;
+  margin-bottom:0.5rem;
+  font-weight:600;
+  font-size:0.95rem;
+}
+.retro-bar a{
+  color:#000;
+  text-decoration:none;
+}
+.retro-bar a:hover,
+.retro-bar a.active{ text-decoration:underline; }
+.bar-item{ font-family:var(--font-timer); letter-spacing:1px; }
+
       /* --- Gallery as a grid, left→right ordering --- */
       .gallery {
         column-width: 175px;
@@ -222,12 +244,14 @@
           alt="Clock Snail Bonsai Ionizing Radiation on Carrot"
         />
 
-        <div id="timer">Loading…</div>
-        <nav>
-          <a href="#notes" data-target="notes">Notes</a>
-          <a href="#gallery" data-target="gallery">Gallery</a>
-          <a href="#support" data-target="support">Support</a>
-        </nav>
+        <div class="retro-bar top-bar">
+  <span id="timer">Loading...<class="bar-item"></span>
+</div>
+        <nav class="retro-bar nav-bar">
+  <a href="#notes"   data-target="notes">Notes</a>
+  <a href="#gallery" data-target="gallery">Gallery</a>
+  <a href="#support" data-target="support">Support</a>
+</nav>
         <section id="home" class="active">
           <p class="welcome"></p>
         </section>
