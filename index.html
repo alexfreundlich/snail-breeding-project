@@ -210,6 +210,25 @@ overflow-wrap: normal; /* no hyphens or forced breaks */
 }
 .gallery { column-width: 80px; }   /* try 110–130px to taste */
 .gallery img    { border-radius: 2px; }   /* or 0 for square corners */
+            /* Hero image and badge styling */
+    .hero {
+      position: relative;
+      display: inline-block;
+      margin: 0 auto;
+    }
+    .hero .splash {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+    .hero .badge {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 30%;
+      max-width: 180px;
+    }
+
 #support        { padding-bottom: 2.5rem; }   /* adjust to taste */
 }
 </style>
@@ -232,7 +251,11 @@ alt="Clock Snail Bonsai Ionizing Radiation on Carrot"
 </nav>
 <section id="home" class="active">
 <p class="welcome"></p>
-</section>
+<<div class="welcome" style="position: relative; text-align: center;">
+  <img src="assets/splash.png" alt="Splash" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+  <img src="assets/badge.png" alt="Celebrating over 6 years badge" style="position: absolute; bottom: 0; right: 0; width: 30%; max-width: 180px;">
+</div>
+/section>
 <section id="notes">
 <article>
 <h3>Notes on the Never‑Ending Snail Breeding Project</h3>
