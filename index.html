@@ -9,306 +9,135 @@
   href="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/Snail%20Favicon.png?v=1750973734782"
   type="image/x-icon"
 />
-
-<!-- Fonts (cleaned) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
 
 <style>
-:root {
-  --timer: #0066ff;
-  --accent: #ff7f00;
-  --font-base: "Rubik", Arial, sans-serif;
-  --font-timer: "Roboto", monospace;
-  --fade-height: 28px;       /* height of feather at top/bottom */
-  --page-max: 820px;         /* desktop max width of square */
-  --page-vw: 72vw;           /* desktop relative width */
+:root{
+  --timer:#0066ff;
+  --accent:#ff7f00;
+  --font-base:"Rubik",Arial,sans-serif;
+  --font-timer:"Roboto",monospace;
+  --fade-height:28px;
+  --page-max:760px;      /* narrower than before */
+  --page-vw:66vw;        /* narrower than before */
+  --top-offset:4.5vh;    /* higher on the page (tweak here) */
 }
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-html, body {
-  height: 100%;
-  overflow: hidden;
-}
-body {
-  font-family: var(--font-base);
-  line-height: 1.6;
-  color: #1b1b1b;
-  background: url("https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/MacBook%20Pro%2016_%20-%204.jpg?v=1750881277001")
-    center/cover fixed no-repeat;
-
-  /* Position the container toward the top (desktop) */
-  display: flex;
-  justify-content: center;     /* center horizontally */
-  align-items: flex-start;     /* push up toward top */
-  min-height: 100vh;
-  padding-top: 6vh;            /* spacing from top edge */
+*,:before,:after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:var(--font-base);
+  line-height:1.6;color:#1b1b1b;
+  background:url("https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/MacBook%20Pro%2016_%20-%204.jpg?v=1750881277001") center/cover fixed no-repeat;
+  display:flex;justify-content:center;align-items:flex-start;
+  min-height:100vh;padding-top:var(--top-offset);
 }
 
-/* Centered translucent container — square on desktop */
-.page {
-  width: clamp(320px, var(--page-vw), var(--page-max));
-  aspect-ratio: 1 / 1;          /* square (desktop) */
-  height: auto;
-  max-height: 90vh;             /* never hugs the top/bottom */
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(4px);
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.25);
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;             /* the square shell itself does not scroll */
-  position: relative;
+/* Square container (desktop) */
+.page{
+  width:clamp(320px,var(--page-vw),var(--page-max));
+  aspect-ratio:1/1;max-height:90vh;height:auto;
+  background:rgba(255,255,255,.75);backdrop-filter:blur(4px);
+  box-shadow:0 0 30px rgba(0,0,0,.25);
+  padding:2rem;display:flex;flex-direction:column;overflow:hidden;position:relative;
 }
 
-/* Make header anchor visually neutral */
-.page > a { display:inline-block; text-decoration:none; border:0; background:transparent; }
-.page > a img { display:block; }
+#main{display:flex;flex-direction:column;flex:1;min-height:0;overflow:auto;position:relative}
 
-/* Internal scrolling happens here */
-#main {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;                /* allows children to shrink+scroll */
-  overflow: auto;               /* scroll the content inside the square */
-  position: relative;
+/* Feather hints */
+#main::before,#main::after{
+  content:"";position:sticky;left:0;right:0;height:var(--fade-height);
+  pointer-events:none;z-index:1;opacity:1;transition:opacity .15s ease-out;
 }
+#main::before{top:0;background:linear-gradient(to bottom,rgba(255,255,255,.85),rgba(255,255,255,0))}
+#main::after{bottom:0;background:linear-gradient(to top,rgba(255,255,255,.85),rgba(255,255,255,0))}
+#main.at-top::before{opacity:0}
+#main.at-bottom::after{opacity:0}
 
-/* Feathered top/bottom edges to hint overflow (hidden at extremes via classes) */
-#main::before,
-#main::after {
-  content: "";
-  position: sticky;
-  left: 0;
-  right: 0;
-  height: var(--fade-height);
-  pointer-events: none;
-  z-index: 1;
-  opacity: 1;
-  transition: opacity 150ms ease-out;
+/* Header */
+.header-link{display:inline-block;text-decoration:none;border:0;background:transparent}
+.header-img{
+  max-width:300px;max-height:109px;object-fit:cover;border-radius:10px;
+  box-shadow:0 2px 6px rgba(0,0,0,.2);margin-bottom:2rem;display:block;
 }
-#main::before {
-  top: 0;
-  background: linear-gradient(to bottom,
-    rgba(255,255,255,0.85), rgba(255,255,255,0));
-}
-#main::after {
-  bottom: 0;
-  background: linear-gradient(to top,
-    rgba(255,255,255,0.85), rgba(255,255,255,0));
-}
-#main.at-top::before    { opacity: 0; }
-#main.at-bottom::after  { opacity: 0; }
-
-.header-img {
-  max-width: 300px;
-  max-height: 109px;
-  object-fit: cover;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  margin-bottom: 2rem;
-  loading: lazy;
-  display: block;
+#timer{
+  font-family:var(--font-timer);font-size:1rem;font-weight:500;letter-spacing:1px;
+  color:var(--timer);margin-bottom:1.5rem;
 }
 
-#timer {
-  font-family: var(--font-timer);
-  font-size: 1rem;
-  font-weight: 500;
-  letter-spacing: 1px;
-  color: var(--timer);
-  margin-bottom: 1.5rem;
+/* Nav */
+nav{font-size:1.2rem;font-weight:500;display:flex;gap:3.5rem;margin-bottom:.5rem}
+nav a{color:#108010;text-decoration:none;position:relative}
+nav a::after{
+  content:"";position:absolute;left:0;bottom:-5px;width:100%;height:5px;border-radius:4px;
+  background:var(--accent);opacity:0;transition:opacity .3s;mix-blend-mode:destination-out;
 }
-
-nav {
-  font-size: 1.2rem;
-  font-weight: 500;
-  display: flex;
-  gap: 3.5rem;
-  margin-bottom: 0.5rem;
-}
-nav a {
-  color: #108010;
-  text-decoration: none;
-  position: relative;
-}
-nav a::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -5px;
-  width: 100%;
-  height: 5px;
-  border-radius: 4px;
-  background: var(--accent);
-  opacity: 0;
-  transition: opacity 0.3s;
-  mix-blend-mode: destination-out;
-}
-nav a:hover::after,
-nav a.active::after { opacity: 1; }
-
-h3 {
-  margin: 1.5rem 0 0.25rem;
-  font-weight: 500;
-}
-p { margin-bottom: 0.75rem; }
-.date {
-  font-size: 0.85rem;
-  color: #555;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  display: block;
-}
+nav a:hover::after,nav a.active::after{opacity:1}
 
 /* Sections */
-section {
-  display: none;
-  animation: fade 0.3s forwards;
-  padding-top: 1.25rem;
-}
-section.active {
-  display: block;
-  padding-bottom: 2rem;
-}
-section#notes h3:first-of-type { margin-top: 0; }
+section{display:none;animation:fade .3s forwards;padding-top:1.25rem}
+section.active{display:block;padding-bottom:2rem}
+section#notes h3:first-of-type{margin-top:0}
+h3{margin:1.5rem 0 .25rem;font-weight:500}
+p{margin-bottom:.75rem}
+.date{font-size:.85rem;color:#555;margin:1rem 0;display:block}
+@keyframes fade{from{opacity:0}to{opacity:1}}
 
-/* HOME: make the section consume remaining space so splash fully fits */
-#home.active {
-  flex: 1;                    /* fill the remaining vertical space */
-  min-height: 0;              /* allow child to size within */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* HOME — keep normal top flow (no vertical centering),
+   but ensure the splash fits fully inside the available area */
+#home.active{display:block}
+.hero{
+  position:relative;display:flex;align-items:center;justify-content:center;
+  width:100%;height:calc(100% - .5rem); /* lets the image scale within the square */
+  max-width:100%;max-height:100%;
 }
-
-/* Hero (splash + badge) */
-.hero {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  max-height: 100%;           /* confined to the #home section height */
-  max-width: 100%;
-  height: 100%;               /* ensure the splash can scale to full area */
+.hero .splash{
+  display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;
 }
-.hero .splash {
-  display: block;
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
-  object-fit: contain;        /* ensure fully visible without cropping */
-}
-.hero .badge {
-  position: absolute;
-  bottom: 0;
-  left: 0;                    /* bottom-left */
-  width: 28%;
-  max-width: 180px;
+.hero .badge{
+  position:absolute;bottom:0;left:0;width:28%;max-width:180px;
 }
 
 /* Gallery masonry */
-.gallery {
-  column-width: 175px;
-  column-gap: 1rem;
-}
-.gallery img {
-  display: inline-block;
-  width: 100%;
-  height: auto;
-  margin-bottom: 1rem;
-  break-inside: avoid;
-  border-radius: 4px;
-}
+.gallery{column-width:175px;column-gap:1rem}
+.gallery img{display:inline-block;width:100%;height:auto;margin-bottom:1rem;break-inside:avoid;border-radius:4px}
 
-/* Support layout: description + CTA LEFT, title + image RIGHT */
-.support-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.25rem 1.5rem;
-  align-items: start;
+/* SUPPORT — desktop: LEFT = title+image, RIGHT = description+CTA */
+.support-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:1.25rem 1.5rem;align-items:start
 }
-.support-left {
-  order: 1;
-}
-.support-right {
-  order: 2;
-  display: flex;
-  flex-direction: column;
-}
-.support-title {
-  margin-top: 0;
-}
+.support-left{order:1;display:flex;flex-direction:column}
+.support-right{order:2}
+.support-title{margin-top:0}
 #support img.product-card{
-  width:100%;
-  max-width:420px;
-  aspect-ratio: 3 / 4;
-  border-radius:8px;
-  height:auto;
-  align-self: flex-start;
-  max-height: 48vh;  /* keep section from overflowing the square */
+  width:100%;max-width:420px;aspect-ratio:3/4;border-radius:8px;height:auto;align-self:flex-start;max-height:48vh;
 }
 
-@keyframes fade { from {opacity:0;} to {opacity:1;} }
-
-/* -----------------------------
-   Mobile tweaks
-   -----------------------------*/
-@media (max-width: 600px) {
-  body {
-    padding-top: 4vh;           /* similar “toward top” placement */
+/* Mobile layout */
+@media (max-width:600px){
+  :root{--fade-height:20px}
+  body{padding-top:3vh}
+  .page{
+    width:94vw;aspect-ratio:auto;max-height:none;min-height:78vh;
+    padding:1rem 1rem 1.25rem;
   }
-
-  /* Container becomes taller (not square) to show more text */
-  .page {
-    width: 94vw;
-    aspect-ratio: auto;         /* no longer forced to square */
-    max-height: none;           /* allow tall container */
-    min-height: 78vh;           /* comfortably tall */
-    padding: 1rem 1rem 1.25rem;
-  }
-
-  .header-img {
-    max-width: 180px;           /* smaller header */
-    max-height: 66px;
-    margin-bottom: 1rem;
-  }
-  #timer {
-    font-size: 0.8rem;          /* timer scaled down */
-    margin-bottom: 1rem;
-  }
-  nav {
-    font-size: 1rem;
-    gap: 1.25rem;
-    margin-bottom: 0.25rem;
-  }
-
-  /* Feather height a bit smaller on mobile */
-  :root { --fade-height: 20px; }
-
-  /* Support stacks for small screens */
-  .support-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-  .support-left, .support-right { order: unset; }
-  #support img.product-card { max-width: 100%; max-height: 42vh; }
+  .header-img{max-width:180px;max-height:66px;margin-bottom:1rem}
+  #timer{font-size:.8rem;margin-bottom:1rem}
+  nav{font-size:1rem;gap:1.25rem;margin-bottom:.25rem}
+  /* Support stacks with image/title ABOVE description/CTA */
+  .support-grid{grid-template-columns:1fr}
+  .support-left{order:1}
+  .support-right{order:2}
+  #support img.product-card{max-width:100%;max-height:42vh}
 }
 </style>
 </head>
 <body>
 <div class="page">
   <div id="main">
-    <!-- Header image links back to home -->
-    <a href="#home" aria-label="Go to home">
+    <!-- Header: clicking returns to root (no #home) without reloading -->
+    <a id="homeLink" class="header-link" href="/" aria-label="Go to home">
       <img
         class="header-img"
         src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/Screenshot%202025-06-21%20at%201.56.54%E2%80%AFPM%201.png?v=1750882151549"
@@ -324,7 +153,7 @@ section#notes h3:first-of-type { margin-top: 0; }
       <a href="#support" data-target="support">Support</a>
     </nav>
 
-    <!-- HOME: splash + badge only here; scaled to fit the available square area -->
+    <!-- HOME -->
     <section id="home" class="active">
       <div class="hero">
         <img class="splash" src="assets/splash.png" alt="Splash">
@@ -732,10 +561,18 @@ section#notes h3:first-of-type { margin-top: 0; }
       </div>
     </section>
 
-    <!-- SUPPORT: description + CTA LEFT, title + image RIGHT -->
+    <!-- SUPPORT — desktop: LEFT (title+image) / RIGHT (copy+CTA); mobile stacks image/title above copy -->
     <section id="support">
       <div class="support-grid">
         <div class="support-left">
+          <h3 class="support-title">Snail Defecation Trading Card (Sleeved)</h3>
+          <img
+            class="product-card"
+            src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-landscape.png?v=1751232416767"
+            alt="Snail-defecation trading card in sleeve"
+          />
+        </div>
+        <div class="support-right">
           <p>
             For <strong>$40</strong> you’ll receive a one-of-a-kind
             snail-defecation trading card in a clear archival sleeve.
@@ -756,82 +593,71 @@ section#notes h3:first-of-type { margin-top: 0; }
             </p>
           </noscript>
         </div>
-        <div class="support-right">
-          <h3 class="support-title">Snail Defecation Trading Card (Sleeved)</h3>
-          <img
-            class="product-card"
-            src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-landscape.png?v=1751232416767"
-            alt="Snail-defecation trading card in sleeve"
-          />
-        </div>
       </div>
     </section>
-    <!-- end of #support -->
   </div>
 </div>
 
 <script>
 /* -----------------------------------------------------------
   Never-Ending Snail Breeding Project — main script
-  (hash-based routing; square container)
+  (hash router, fades, header -> root pushState)
   ----------------------------------------------------------- */
 (() => {
   "use strict";
 
-  if ("scrollRestoration" in history) {
-    history.scrollRestoration = "manual";
-  }
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 
-  /* Breeding timer */
-  const startedAt = new Date("2019-06-17T00:32:00-04:00");
-  const timerEl = document.getElementById("timer");
-
-  function updateTimer() {
-    const diff = Date.now() - startedAt;
-    const yrs = Math.floor(diff / 31536000000);
-    let days = Math.floor((diff % 31536000000) / 86400000);
-    const mos = Math.floor(days / 30);
-    days %= 30;
-    const h = Math.floor((diff % 86400000) / 3600000);
-    const m = Math.floor((diff % 3600000) / 60000);
-    const s = Math.floor((diff % 60000) / 1000);
-    const ms = diff % 1000;
-    timerEl.textContent = `${yrs}y ${mos}m ${days}d ${h}h ${m}m ${s}s ${String(ms).padStart(3,"0")}ms`;
-  }
-
-  /* Simple hash-router */
   const mainEl   = document.getElementById("main");
   const sections = Array.from(document.querySelectorAll("section"));
   const links    = Array.from(document.querySelectorAll("nav a"));
-  const validIds = ["home", "notes", "gallery", "support"];
+  const validIds = ["home","notes","gallery","support"];
 
-  function showSection() {
-    const id = validIds.includes(location.hash.slice(1))
-      ? location.hash.slice(1)
-      : "home";
+  /* Breeding timer */
+  const startedAt = new Date("2019-06-17T00:32:00-04:00");
+  const timerEl   = document.getElementById("timer");
+  function updateTimer(){
+    const diff = Date.now() - startedAt;
+    const yrs = Math.floor(diff / 31536000000);
+    let days  = Math.floor((diff % 31536000000) / 86400000);
+    const mos = Math.floor(days / 30); days %= 30;
+    const h   = Math.floor((diff % 86400000) / 3600000);
+    const m   = Math.floor((diff % 3600000) / 60000);
+    const s   = Math.floor((diff % 60000) / 1000);
+    const ms  = diff % 1000;
+    timerEl.textContent = `${yrs}y ${mos}m ${days}d ${h}h ${m}m ${s}s ${String(ms).padStart(3,"0")}ms`;
+  }
 
-    sections.forEach((sec) =>
-      sec.classList.toggle("active", sec.id === id)
-    );
-
-    links.forEach((a) =>
-      a.classList.toggle("active", a.getAttribute("href") === "#" + id)
-    );
-
-    // Reset scroll position of the scrolling container
+  /* Router */
+  function showSection(){
+    const id = validIds.includes(location.hash.slice(1)) ? location.hash.slice(1) : "home";
+    sections.forEach(sec => sec.classList.toggle("active", sec.id === id));
+    links.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + id));
     mainEl.scrollTop = 0;
-    // Update fade visibility after content swap
     updateFades();
   }
 
-  /* Feather fade visibility */
-  function updateFades() {
+  /* Feather fades */
+  function updateFades(){
     const atTop = mainEl.scrollTop <= 1;
     const atBottom = Math.abs(mainEl.scrollHeight - mainEl.clientHeight - mainEl.scrollTop) <= 1;
-
     mainEl.classList.toggle("at-top", atTop);
     mainEl.classList.toggle("at-bottom", atBottom);
   }
+
+  /* Header click → clear hash & push clean URL without reload */
+  const homeLink = document.getElementById("homeLink");
+  homeLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (location.hash) {
+      history.pushState(null, "", "/");  // shows mysnails.com (no #)
+    }
+    // Ensure the home section is active even if already hashless
+    sections.forEach(sec => sec.classList.toggle("active", sec.id === "home"));
+    links.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#home"));
+    mainEl.scrollTop = 0;
+    updateFades();
+  });
 
   window.addEventListener("DOMContentLoaded", () => {
     showSection();
@@ -839,7 +665,6 @@ section#notes h3:first-of-type { margin-top: 0; }
     setInterval(updateTimer, 1);
     updateFades();
   });
-
   mainEl.addEventListener("scroll", updateFades);
   window.addEventListener("hashchange", showSection);
   window.addEventListener("resize", updateFades);
