@@ -19,18 +19,17 @@
   --accent:#ff7f00;
   --font-base:"Rubik",Arial,sans-serif;
   --font-timer:"Roboto",monospace;
-  --fade-height:28px;
   --page-max:760px;      /* tuned width */
   --page-vw:66vw;        /* tuned width */
   --top-offset:4.5vh;    /* positions square higher on page */
-  --container-border:#d6c1a5;
+  --container-border:#c0a07a; /* darker than #d6c1a5 */
 }
 *,:before,:after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
 body{
   font-family:var(--font-base);
   line-height:1.6;color:#1b1b1b;
-  background:url("https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/MacBook%20Pro%2016_%20-%204.jpg?v=1750881277001") center/cover fixed no-repeat;
+  background:url("https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/MacBook%20Pro%2016_%20-%204.jpg?v=1750881277001") center / cover fixed no-repeat;
   display:flex;justify-content:center;align-items:flex-start;
   min-height:100vh;padding-top:var(--top-offset);
 }
@@ -41,21 +40,19 @@ body{
   aspect-ratio:1/1;max-height:90vh;height:auto;
   background:rgba(255,255,255,.75);backdrop-filter:blur(4px);
   box-shadow:0 0 30px rgba(0,0,0,.25);
-  border:2px solid var(--container-border);           /* NEW outline */
-  border-radius:10px;
+  border:2px solid var(--container-border); /* darker outline */
+  /* no radius per request */
   padding:2rem;display:flex;flex-direction:column;overflow:hidden;position:relative;
 }
 
-/* Make #main a column: non-scrolling masthead + scrolling content area */
-#main{
-  display:flex;flex-direction:column;flex:1;min-height:0;position:relative;
-}
+/* #main holds masthead (fixed) + content (scrolls) */
+#main{display:flex;flex-direction:column;flex:1;min-height:0;position:relative}
 
-/* Non-scrolling header area (keeps position identical across tabs) */
+/* Non-scrolling masthead */
 .masthead{flex:0 0 auto}
 .header-link{display:inline-block;text-decoration:none;border:0;background:transparent}
 .header-img{
-  max-width:300px;max-height:109px;object-fit:cover;border-radius:10px;
+  max-width:300px;max-height:109px;object-fit:cover;
   box-shadow:0 2px 6px rgba(0,0,0,.2);margin-bottom:2rem;display:block;
 }
 #timer{
@@ -70,19 +67,11 @@ nav a::after{
 }
 nav a:hover::after,nav a.active::after{opacity:1}
 
-/* Scrollable CONTENT area (with feather fades) */
+/* Scrollable content area */
 #content{
   flex:1 1 auto;min-height:0;overflow:auto;position:relative;
   -webkit-overflow-scrolling:touch;
 }
-#content::before,#content::after{
-  content:"";position:sticky;left:0;right:0;height:var(--fade-height);
-  pointer-events:none;z-index:1;opacity:1;transition:opacity .15s ease-out;
-}
-#content::before{top:0;background:linear-gradient(to bottom,rgba(255,255,255,.85),rgba(255,255,255,0))}
-#content::after{bottom:0;background:linear-gradient(to top,rgba(255,255,255,.85),rgba(255,255,255,0))}
-#content.at-top::before{opacity:0}
-#content.at-bottom::after{opacity:0}
 
 /* Sections */
 section{display:none;animation:fade .3s forwards;padding-top:1.25rem}
@@ -93,7 +82,7 @@ p{margin-bottom:.75rem}
 .date{font-size:.85rem;color:#555;margin:1rem 0;display:block}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 
-/* HOME — splash + badge; badge smaller & bottom-left overlap */
+/* HOME — splash + badge; bottom-left overlap */
 #home.active{display:block}
 .hero{
   position:relative;display:flex;align-items:center;justify-content:center;
@@ -101,7 +90,7 @@ p{margin-bottom:.75rem}
 }
 .hero-box{
   position:relative;display:inline-block;
-  width:min(78%, 780px);      /* splash scale; unchanged */
+  width:min(78%, 780px);
   max-width:100%;max-height:78%;
 }
 .hero .splash{
@@ -109,38 +98,59 @@ p{margin-bottom:.75rem}
 }
 .hero .badge{
   position:absolute;bottom:0;left:0;   /* bottom-left overlap */
-  width:14%;                            /* SMALLER badge (desktop) */
+  width:14%;                            /* sized to be subtle */
   max-width:120px;
 }
 
 /* Gallery masonry */
 .gallery{column-width:175px;column-gap:1rem}
-.gallery img{display:inline-block;width:100%;height:auto;margin-bottom:1rem;break-inside:avoid;border-radius:4px}
+.gallery img{display:inline-block;width:100%;height:auto;margin-bottom:1rem;break-inside:avoid}
 
-/* SUPPORT — desktop: LEFT (title+image) / RIGHT (copy+CTA); image cropped (no stretch) */
+/* SUPPORT — desktop: LEFT (title+image) / RIGHT (copy+CTA) */
 .support-grid{
-  display:grid;grid-template-columns:auto 1fr;gap:1.25rem 1.5rem;align-items:stretch;
+  display:grid;grid-template-columns:auto 1fr;gap:1rem 1.25rem;align-items:start;
 }
 .support-left{order:1;display:flex;flex-direction:column;align-items:flex-start}
 .support-right{order:2;display:flex;flex-direction:column;justify-content:flex-end}
+
+/* Keep title on one line; it can extend beyond image width */
 .support-title{margin-top:0;white-space:nowrap}
 
-/* Cropped product image frame to avoid stretching */
-.product-figure{
-  width:100%;
-  max-width:320px;            /* slightly narrower so everything fits w/o scroll */
-  aspect-ratio:3/4;
-  border-radius:8px;overflow:hidden;
+/* Product media: smaller height so entire Support view fits with no scrolling */
+.product-media{
+  display:block;
+  max-width:360px;          /* allow narrower than title */
 }
-.product-figure img{width:100%;height:100%;object-fit:cover}
+.product-media img{
+  display:block;
+  height:auto;
+  max-height:230px;         /* << shrink height to fit content */
+  width:auto;               /* keep natural aspect ratio (no stretch) */
+  max-width:100%;           /* responsive cap */
+}
+
+/* Button: prevent stretching */
+.btn-cta{
+  display:inline-block;
+  width:auto;               /* no stretch */
+  white-space:nowrap;
+  align-self:flex-start;    /* don't stretch in flex column */
+  background:var(--accent);
+  color:#fff;
+  font-weight:600;
+  padding:.7rem 1.2rem;
+  border-radius:.5rem;
+  text-decoration:none;
+  font-size:1rem;
+  margin-top:.25rem;
+}
 
 /* Mobile layout */
 @media (max-width:600px){
-  :root{--fade-height:20px}
   body{padding-top:3vh}
   .page{
     width:94vw;
-    height:calc(100vh - 6vh); /* fixed container height; content area scrolls */
+    height:calc(100vh - 6vh); /* fixed container height; inner content scrolls */
     max-height:none;min-height:0;
     padding:1rem 1rem 1.25rem;
   }
@@ -148,14 +158,15 @@ p{margin-bottom:.75rem}
   #timer{font-size:.8rem;margin-bottom:1rem}
   nav{font-size:1rem;gap:1.25rem;margin-bottom:.25rem}
 
-  /* Bigger splash on mobile; badge still overlaps bottom-left, but smaller than before */
+  /* Bigger splash + badge on mobile; same overlap */
   .hero-box{width:min(86%, 520px);max-height:86%}
-  .hero .badge{width:20%;max-width:130px} /* mobile badge (smaller than before change) */
+  .hero .badge{width:20%;max-width:130px}
 
-  /* Support stacks: image/title ABOVE copy */
+  /* Support stacks: title+image above copy */
   .support-grid{grid-template-columns:1fr}
   .support-left{order:1}
   .support-right{order:2;justify-content:flex-start}
+  .product-media img{max-height:240px}
 }
 </style>
 </head>
@@ -182,7 +193,7 @@ p{margin-bottom:.75rem}
       </nav>
     </div>
 
-    <!-- Scrollable content area with fades -->
+    <!-- Scrollable content area -->
     <div id="content">
       <!-- HOME -->
       <section id="home" class="active">
@@ -599,13 +610,12 @@ p{margin-bottom:.75rem}
         <div class="support-grid">
           <div class="support-left">
             <h3 class="support-title">Snail Defecation Trading Card (Sleeved)</h3>
-            <figure class="product-figure">
+            <div class="product-media">
               <img
-                class="product-card"
                 src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-landscape.png?v=1751232416767"
                 alt="Snail-defecation trading card in sleeve"
               />
-            </figure>
+            </div>
           </div>
           <div class="support-right">
             <p>
@@ -619,7 +629,7 @@ p{margin-bottom:.75rem}
               href="https://ko-fi.com/s/48176b8cd3"
               target="_blank"
               rel="noopener"
-              style="display:inline-block;background:var(--accent);color:#fff;font-weight:600;padding:0.75rem 1.25rem;border-radius:0.5rem;text-decoration:none;font-size:1rem;margin-top:0.25rem;"
+              class="btn-cta"
             >Get a card</a>
             <noscript>
               <p>
@@ -638,7 +648,7 @@ p{margin-bottom:.75rem}
 <script>
 /* -----------------------------------------------------------
   Never-Ending Snail Breeding Project — main script
-  (hash router, fades on #content, header -> root pushState)
+  (hash router, header -> root pushState, parallax on inner scroll)
   ----------------------------------------------------------- */
 (() => {
   "use strict";
@@ -671,15 +681,6 @@ p{margin-bottom:.75rem}
     sections.forEach(sec => sec.classList.toggle("active", sec.id === id));
     links.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + id));
     contentEl.scrollTop = 0;
-    updateFades();
-  }
-
-  /* Feather fades on content area */
-  function updateFades(){
-    const atTop = contentEl.scrollTop <= 1;
-    const atBottom = Math.abs(contentEl.scrollHeight - contentEl.clientHeight - contentEl.scrollTop) <= 1;
-    contentEl.classList.toggle("at-top", atTop);
-    contentEl.classList.toggle("at-bottom", atBottom);
   }
 
   /* Header click → clear hash & push clean URL without reload */
@@ -690,18 +691,23 @@ p{margin-bottom:.75rem}
     sections.forEach(sec => sec.classList.toggle("active", sec.id === "home"));
     links.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#home"));
     contentEl.scrollTop = 0;
-    updateFades();
   });
+
+  /* Parallax: move page background slightly with inner scroll */
+  function onParallax(){
+    // Move background at 20% of inner scroll speed
+    document.body.style.backgroundPosition = `center calc(50% + ${-contentEl.scrollTop * 0.2}px)`;
+  }
 
   window.addEventListener("DOMContentLoaded", () => {
     showSection();
     updateTimer();
     setInterval(updateTimer, 1);
-    updateFades();
+    onParallax();
   });
-  contentEl.addEventListener("scroll", updateFades);
-  window.addEventListener("hashchange", showSection);
-  window.addEventListener("resize", updateFades);
+  contentEl.addEventListener("scroll", onParallax);
+  window.addEventListener("hashchange", () => { showSection(); onParallax(); });
+  window.addEventListener("resize", onParallax);
 })();
 </script>
 </body>
