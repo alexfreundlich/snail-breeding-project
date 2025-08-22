@@ -177,6 +177,7 @@ p{ margin-bottom:.75rem; }
 .hero .badge{
   position:absolute;
   left:0;                        /* bottom-left overlay */
+  left: var(--badge-left-desktop);
   bottom:var(--badge-bottom-desktop);
   width:var(--badge-size-desktop);
   max-width:180px;
@@ -316,8 +317,9 @@ p{ margin-bottom:.75rem; }
 
   .hero{ height:var(--avail-h, 50vh); }
   .hero .badge{
-    width:var(--badge-size-mobile);
-    bottom:var(--badge-bottom-mobile);
+    left: var(--badge-left-mobile);      /* mobile nudge */
+    bottom: var(--badge-bottom-mobile);  /* mobile vertical tweak */
+    width: var(--badge-size-mobile);
   }
 
   #gallery .gallery-wrap{ height:var(--avail-h, 50vh); }
