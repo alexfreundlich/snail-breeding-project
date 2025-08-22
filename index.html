@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Never-Ending Snail Breeding Project</title>
+
 <link
   rel="icon"
   href="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/Snail%20Favicon.png?v=1750973734782"
@@ -17,22 +18,23 @@
 
 <style>
 :root{
-  --timer:#0066ff;
-  --accent:#ff7f00;
-  --font-base:"Rubik", Arial, sans-serif;
-  --font-timer:"Roboto", monospace;
+  --timer: #0066ff;
+  --accent: #ff7f00;
+  --font-base: "Rubik", Arial, sans-serif;
+  --font-timer: "Roboto", monospace;
 
-  /* Layout tuning */
-  --page-max:820px;         /* max width of square on desktop */
-  --page-vw:72vw;           /* responsive width of square on desktop */
+  /* Layout */
+  --top-offset: 1.5rem;            /* distance from top of viewport */
+  --page-max: 820px;               /* max width of the square */
+  --page-vw: 72vw;                 /* relative width of the square */
 
-  /* 🔧 Splash badge controls — Tweak these to adjust size/position */
-  --badge-size-desktop: 22%;    /* make smaller by lowering this % (e.g., 20%) */
-  --badge-bottom-desktop: -30px; /* move lower with a more negative value (e.g., -14px) */
-  --badge-left-desktop: 20px;
-  --badge-size-mobile: 10%;     /* mobile badge size */
-  --badge-bottom-mobile: -6px;  /* mobile vertical offset */
-  --badge-left-mobile: 0px;
+  /* Spacing harmonization */
+  --section-gap: 1.5rem;           /* space between tabs and first line of content */
+  --support-gap: 1.5rem;           /* horizontal gap between support image+title and description */
+
+  /* Splash sizing */
+  --splash-max-w: 94%;             /* fit inside the home section without scrolling */
+  --splash-max-h: 94%;
 }
 
 *,
@@ -50,54 +52,46 @@ body{
 
   display:flex;
   justify-content:center;
-  align-items:flex-start; /* push container toward top */
+  align-items:flex-start;        /* push toward top */
   min-height:100vh;
+  padding-top:var(--top-offset);
 }
 
-/* Translucent square container (no outline, no radius) */
+/* Square container near top */
 .page{
   width:clamp(320px, var(--page-vw), var(--page-max));
-  aspect-ratio:1/1;            /* square on desktop */
-  height:auto;
-  max-height:90vh;             /* never touches top/bottom of viewport */
+  aspect-ratio:1/1;
   background:rgba(255,255,255,0.75);
   backdrop-filter:blur(4px);
-  border:none;
-  border-radius:0;
   box-shadow:0 0 30px rgba(0,0,0,0.25);
-  padding:2rem;
-
   display:flex;
   flex-direction:column;
-  overflow:hidden;             /* outer shell doesn't scroll */
+  overflow:hidden;               /* outer container doesn’t scroll */
   position:relative;
-
-  /* top margin per request */
-  margin-top:1.5rem;
 }
 
-/* Inner scroll container for long sections like Notes */
+/* Internal scrolling region */
 #main{
   display:flex;
   flex-direction:column;
-  flex:1 1 auto;
-  min-height:0;                /* allow this to shrink so its content can scroll */
-  overflow:auto;               /* scroll only inside the square */
+  flex:1;
+  min-height:0;                  /* critical for flex scrolling */
+  overflow:auto;                 /* scroll inside the square */
+  -webkit-overflow-scrolling:touch; /* iOS momentum scroll */
   position:relative;
+  padding:2rem;                  /* inner content padding */
 }
 
-/* Masthead (header image + timer + nav) */
-.masthead{ flex:0 0 auto; }
-.header-link{ display:inline-block; text-decoration:none; }
+/* Header image (click → home). No rounding. */
 .header-img{
   max-width:300px;
   max-height:109px;
   object-fit:cover;
-  border-radius:0; /* no rounding */
-  box-shadow:0 2px 6px rgba(0,0,0,0.2);
   margin-bottom:1rem;
   display:block;
 }
+
+/* Timer */
 #timer{
   font-family:var(--font-timer);
   font-size:1rem;
@@ -106,11 +100,13 @@ body{
   color:var(--timer);
   margin-bottom:0.75rem;
 }
+
+/* Tabs */
 nav{
   font-size:1.2rem;
   font-weight:500;
   display:flex;
-  gap:3.5rem;
+  gap:3rem;
   margin-bottom:0.25rem;
 }
 nav a{
@@ -121,10 +117,8 @@ nav a{
 nav a::after{
   content:"";
   position:absolute;
-  left:0;
-  bottom:-5px;
-  width:100%;
-  height:5px;
+  left:0; bottom:-5px;
+  width:100%; height:5px;
   border-radius:4px;
   background:var(--accent);
   opacity:0;
@@ -135,236 +129,184 @@ nav a:hover::after,
 nav a.active::after{ opacity:1; }
 
 /* Sections */
-section{
-  display:none;
-  animation:fade .001s forwards; /* effectively removing transition while keeping logic */
-  padding-top:1rem;
-}
-section.active{
-  display:block;
-  padding-bottom:1rem;
-}
-@keyframes fade{ from{opacity:1} to{opacity:1} }
+section{ display:none; animation:fade .25s forwards; padding-top:var(--section-gap); }
+section.active{ display:block; }
+@keyframes fade{ from{opacity:0;} to{opacity:1;} }
 
 h3{ margin:1.25rem 0 .25rem; font-weight:500; }
 p{ margin-bottom:.75rem; }
-.date{
-  font-size:.85rem;
-  color:#555;
-  margin-top:1rem;
-  margin-bottom:1rem;
-  display:block;
-}
+.date{ font-size:.85rem; color:#555; margin:1rem 0; display:block; }
 
-/* HOME — splash fits fully within available area (no scrolling) */
-.hero{
-  position:relative;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  width:100%;
-  height:var(--avail-h, 48vh);   /* set dynamically by JS so it never overflows */
-  max-width:100%;
-  overflow:hidden;
-}
-.hero .splash{
-  display:block;
-  max-width:100%;
-  max-height:100%;
-  width:auto;
-  height:auto;
-  object-fit:contain;            /* fully visible */
-}
-.hero .badge{
-  position:absolute;
-  left:0;                        /* bottom-left overlay */
-  left: var(--badge-left-desktop);
-  bottom:var(--badge-bottom-desktop);
-  width:var(--badge-size-desktop);
-  max-width:180px;
-  height:auto;
-  pointer-events:none;
-}
-
-/* GALLERY — carousel (no captions, no scrolling, no animation) */
-#gallery .gallery-wrap{
-  width:100%;
-  height:var(--avail-h, 48vh);
-  position:relative;
-  overflow:hidden;
-}
-.carousel-track{
-  display:flex;
-  height:100%;
-  width:100%;
-  /* no transition = no animation; instant image change */
-}
-.slide{
-  min-width:100%;
-  height:100%;
+/* HOME: center the single combined splash image; no scroll needed */
+#home.active{
+  flex:1; min-height:0;
   display:flex;
   align-items:center;
   justify-content:center;
 }
-.slide img{
+.splash-wrap{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%; height:100%;
+}
+.splash-single{
+  max-width:var(--splash-max-w);
+  max-height:var(--splash-max-h);
+  width:auto; height:auto;
+  object-fit:contain;
+}
+
+/* NOTES: remove extra top margin on first heading */
+#notes h3:first-of-type{ margin-top:0; }
+
+/* GALLERY: non-animated carousel (no counter text) */
+.gallery-stage{
+  position:relative;
+  width:100%;
+  height:calc(100% - var(--section-gap)); /* stay within section without scrolling */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+.gallery-slide{
   max-width:100%;
   max-height:100%;
-  object-fit:contain;            /* never taller than viewport; no scroll */
-  border-radius:0;               /* no rounding */
+  object-fit:contain;
+  display:none;                  /* only the active image is shown */
 }
-.carousel-arrow{
+.gallery-slide.active{ display:block; }
+
+/* arrows fixed (don’t move with images) */
+.gallery-arrow{
   position:absolute;
   top:50%;
   transform:translateY(-50%);
-  z-index:2;
-  background:rgba(255,255,255,0.9);
-  border:1px solid rgba(0,0,0,0.15);
-  border-radius:999px;
-  width:40px;
-  height:40px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  background:rgba(255,255,255,.85);
+  border:1px solid rgba(0,0,0,.25);
+  padding:.35rem .55rem;
   cursor:pointer;
   user-select:none;
 }
-.carousel-arrow:hover{ background:rgba(255,255,255,1); }
-.carousel-arrow.left{ left:8px; }
-.carousel-arrow.right{ right:8px; }
+.gallery-arrow:hover{ background:#fff; }
+.gallery-prev{ left:.25rem; }
+.gallery-next{ right:.25rem; }
 
-/* SUPPORT — two columns: LEFT = title + image; RIGHT = desc + button bottom-aligned */
+/* SUPPORT layout */
 #support .support-grid{
   display:grid;
-  grid-template-columns: 1.05fr 0.95fr; /* product a touch wider */
-  gap:1rem 1.25rem;
-  align-items:stretch;
-  width:100%;
-  height:var(--avail-h, 48vh);          /* fill available space */
-}
-
-/* LEFT column: title (one line) at top, image fills remaining without distortion */
-.support-left{
-  min-width:0;
-  display:grid;
-  grid-template-rows:auto 1fr;  /* title + image */
+  grid-template-columns:auto 1fr;   /* image (and title above it) | description+button */
+  grid-auto-rows:auto;
+  column-gap:var(--support-gap);
   align-items:start;
 }
-.support-title-left{
-  margin:0 0 .5rem 0;
-  white-space:nowrap;
+
+/* Title aligned with image left edge; same top offset as other sections */
+#support .support-title{
+  margin-top:0;                   /* the section provides top padding already */
+  margin-bottom:.5rem;
+  white-space:nowrap;             /* keep it on one line */
   overflow:hidden;
   text-overflow:ellipsis;
 }
-.product-card{
-  max-height:100%;
-  max-width:100%;
-  height:auto;
+
+/* Image directly under the title, left-aligned with container */
+#support .product-card{
   width:auto;
-  object-fit:contain;           /* no warp */
-  border-radius:0;
-  justify-self:center;
+  height:auto;
+  max-width:100%;
+  max-height:44vh;               /* ensure the whole section fits without scrolling */
+  object-fit:contain;            /* never stretch/warp */
+  margin:0;                      /* flush left */
 }
 
-/* RIGHT column: description + button bottom-aligned */
-.support-right{
-  display:grid;
-  grid-template-rows:1fr auto;  /* spacer + CTA block */
-  min-width:0;
+/* Right column: description + CTA bottom-aligned to image */
+#support .support-right{
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;      /* bottom-align to image height */
 }
-.support-cta{
-  align-self:end;
-}
-.support-cta p{ margin-bottom:.6rem; }
-.kofi-btn{
-  display:inline-block;                /* prevent stretching */
+#support .support-cta{
+  display:inline-block;
   background:var(--accent);
   color:#fff;
   font-weight:600;
-  padding:.65rem 1.1rem;
+  padding:.6rem 1.05rem;
   border-radius:.5rem;
   text-decoration:none;
   font-size:1rem;
-  width:auto;                          /* hug content */
+  margin-top:.35rem;
+  width:auto;                    /* don’t stretch */
 }
 
-/* -----------------------------
-   Mobile tweaks
-   -----------------------------*/
+/* Images everywhere are square-cornered */
+img{ border-radius:0; }
+
+/* ---------------------------
+   Mobile: same square layout,
+   smaller type & header
+   ---------------------------*/
 @media (max-width:600px){
   .page{
     width:94vw;
-    aspect-ratio:auto;
-    min-height:82vh;
-    max-height:none;
-    padding:1rem 1rem 1.25rem;
-    margin-top:1.5rem; /* keep as requested */
+    aspect-ratio:1/1;
   }
-
+  #main{
+    padding:1rem;
+  }
   .header-img{
     max-width:180px;
     max-height:66px;
-    margin-bottom:.75rem;
-    border-radius:0;
+    margin-bottom:.5rem;
   }
   #timer{
-    font-size:.8rem;
-    margin-bottom:.6rem;
+    font-size:.82rem;
+    margin-bottom:.5rem;
   }
   nav{
     font-size:1rem;
     gap:1.25rem;
-    margin-bottom:.25rem;
   }
-
-  .hero{ height:var(--avail-h, 50vh); }
-  .hero .badge{
-    left: var(--badge-left-mobile);      /* mobile nudge */
-    bottom: var(--badge-bottom-mobile);  /* mobile vertical tweak */
-    width: var(--badge-size-mobile);
+  :root{
+    --section-gap: 1rem;
+    --support-gap: 1rem;
+    --splash-max-w: 96%;
+    --splash-max-h: 96%;
   }
-
-  #gallery .gallery-wrap{ height:var(--avail-h, 50vh); }
-
-  /* Stack support on mobile: title + image above, then desc + button */
-  #support .support-grid{
-    grid-template-columns:1fr;
-    height:var(--avail-h, 60vh);
-    gap:.75rem;
-  }
-  .support-left{ order:1; }
-  .support-right{ order:2; }
+  /* Support stacks tighter but keeps columns if space allows */
+  #support .product-card{ max-height:38vh; }
 }
 </style>
 </head>
 <body>
   <div class="page">
     <div id="main">
-      <!-- Masthead -->
-      <div class="masthead">
-        <!-- Click header → go to root (no hash) -->
-        <a class="header-link" href="/" aria-label="Go to home">
-          <img
-            class="header-img"
-            src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/Screenshot%202025-06-21%20at%201.56.54%E2%80%AFPM%201.png?v=1750882151549"
-            alt="Clock Snail Bonsai Ionizing Radiation on Carrot"
-          />
-        </a>
-        <div id="timer">Loading…</div>
-        <nav>
-          <a href="#notes"   data-target="notes">Notes</a>
-          <a href="#gallery" data-target="gallery">Gallery</a>
-          <a href="#support" data-target="support">Support</a>
-        </nav>
-      </div>
+      <!-- Header image (click to clear hash → URL is just domain) -->
+      <a href="/" id="headerLink" aria-label="Go to home">
+        <img
+          class="header-img"
+          src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/Screenshot%202025-06-21%20at%201.56.54%E2%80%AFPM%201.png?v=1750882151549"
+          alt="Clock Snail Bonsai Ionizing Radiation on Carrot"
+        />
+      </a>
 
-      <!-- Sections -->
+      <div id="timer">Loading…</div>
+
+      <nav>
+        <a href="#notes"   data-target="notes">Notes</a>
+        <a href="#gallery" data-target="gallery">Gallery</a>
+        <a href="#support" data-target="support">Support</a>
+      </nav>
+
+      <!-- HOME: new combined splash image (no separate badge logic) -->
       <section id="home" class="active">
-        <div class="hero">
-          <img class="splash" src="assets/new-splash.png" alt="Splash">
-          <img class="badge"  src="assets/badge.png"  alt="Celebrating over 6 years badge">
+        <div class="splash-wrap">
+          <img class="splash-single" src="assets/Snail-Splash.png" alt="Snail splash with badge combined">
         </div>
       </section>
 
+      <!-- NOTES -->
       <section id="notes">
         <article>
           <h3>Notes on the Never-Ending Snail Breeding Project</h3>
@@ -709,116 +651,59 @@ p{ margin-bottom:.75rem; }
         </article>
       </section>
 
+      <!-- GALLERY (carousel) -->
       <section id="gallery">
-        <div class="gallery-wrap" aria-label="Image carousel">
-          <button class="carousel-arrow left"  type="button" aria-label="Previous image">&#9664;</button>
-          <button class="carousel-arrow right" type="button" aria-label="Next image">&#9654;</button>
-
-          <div class="carousel-track">
-            <!-- Each image is its own slide; no captions/index text -->
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/centipede-can.jpg?v=1750887319704" alt="Giant Vietnamese Centipede in a clear acrylic paint can"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/dent.jpg?v=1750887458980" alt="Dent the snail in 2019"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-on-drawing.jpg?v=1750897919914" alt="Shell on drawing"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/three-snails.jpg?v=1750897923520" alt="Three snails"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snails-paper-towel.jpg?v=1750898287227" alt="Snails on a paper towel after a bath"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-hand.jpg?v=1750897934241" alt="Snail on hand"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snails-eating.jpg?v=1750897943757" alt="Multiple snails eating together"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/cucumber-bite.jpg?v=1750898212499" alt="A cucumber that has been hollowed out by snails"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-container-early.jpg?v=1750897899686" alt="Early snail container with vegetables"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/magic-trick.jpg?v=1750964784789" alt="Magic Trick as a baby snail"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/tag-yourself.jpg?v=1750964781472" alt="Original nine snail tag yourself with two other snail species"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-lecture.jpg?v=1750897949911" alt="Setting up for a lecture on the Never-Ending Snail Breeding Project"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-rave-1.jpg?v=1750897953207" alt="Hue shifting camera on the snail container"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-rave-2.jpg?v=1750897957245" alt="Hue shifting camera on the snail container"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-rave-3.jpg?v=1750897961519" alt="Hue shifting camera on the snail container"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-ruler.jpg?v=1750898002013" alt="Baby snails along a ruler"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-paper.jpg?v=1750898004959" alt="Baby snails on a piece of yellow paper"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-spiral.jpg?v=1750898017404" alt="A spiral of snail defecation on a pile of fish food"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-food.jpg?v=1750898038926" alt="Feeding setup"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-tanks.png?v=1751158324839" alt="Snail tanks in June of 2025"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-arm.png?v=1751158322167" alt="A young snail on Lizzy's arm"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-shell-info.jpg?v=1750962831006" alt="An informative image about snail shell growth"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-defecation-fingers.jpg?v=1750898010327" alt="Snail defecation on the tips of fingers"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-landscape.jpg?v=1750898021295" alt="A snail defecation landscape painting"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-painting.jpg?v=1750898028668" alt="A snail defecation painting"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-portait-2.jpg?v=1750898043358" alt="Early snail portrait c. 2020"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-portraits.jpg?v=1750897997476" alt="A collection of digital snail portraits"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/eggs.jpg?v=1750898215669" alt="Snail eggs in coconut-husk substrate"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-camille.jpg?v=1750962828016" alt="Camille with snail on thumb"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/baby-snail.jpg?v=1750962821621" alt="Baby snail close-up"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-with-defecation.jpg?v=1750962835030" alt="Snail defecating"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snails-canvas.jpg?v=1750962837668" alt="Snails of various ages on a canvas with mist"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snails-in-hand.jpg?v=1750962840732" alt="Snails in a hand"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-shell-painting.jpg?v=1750965692578" alt="Snail shell portrait"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-memorial.jpg?v=1750965689512" alt="3D-printed snail memorial"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/magic-trick-defecation.jpg?v=1750965724602" alt="Magic Trick defecating"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/four-snails.jpg?v=1750965705188" alt="Four snails against a terrarium"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/three-baby-snails.jpg?v=1750965709226" alt="Three baby snails in a hand"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-stretch.jpg?v=1750965701543" alt="Snail stretching"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/fly-trap.png?v=1751158309522" alt="Yellow shaped fly traps for fungus gnats swarming the tank"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-tweet.png?v=1751309975738" alt="Subtweet about the snail project"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-bucket.png?v=1751313970472" alt="Snails in a cup or bucket"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-face.png?v=1751313973890" alt="A snail face"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-minanimal.png?v=1751313976220" alt="A snail scaling a sculpture"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-milk.png?v=1751313978849" alt="A snail scaling a carton of milk"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-carrots.png?v=1751313981270" alt="Two snails eating a carrot together"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-shell-1.png?v=1751313984014" alt="A detail of a snail shell"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-shell-2.png?v=1751313986255" alt="A detail of another snail's shell"></div>
-            <div class="slide"><img src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-life.png?v=1751313989612" alt="A baby snail scaling on an adult snail"></div>
-          </div>
+        <div class="gallery-stage" id="galleryStage" aria-live="polite">
+          <!-- Slides are injected by JS -->
+          <button class="gallery-arrow gallery-prev" id="prevBtn" aria-label="Previous image">◀</button>
+          <button class="gallery-arrow gallery-next" id="nextBtn" aria-label="Next image">▶</button>
         </div>
       </section>
 
+      <!-- SUPPORT -->
       <section id="support">
         <div class="support-grid">
-          <!-- LEFT: Title + Product image (fills column height without distortion) -->
           <div class="support-left">
-            <h3 class="support-title-left">Snail Defecation Trading Card (Sleeved)</h3>
+            <h3 class="support-title">Snail Defecation Trading Card (Sleeved)</h3>
             <img
               class="product-card"
               src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-landscape.png?v=1751232416767"
               alt="Snail-defecation trading card in sleeve"
             />
           </div>
-
-          <!-- RIGHT: Description + button bottom-aligned -->
           <div class="support-right">
-            <div></div> <!-- spacer -->
-            <div class="support-cta">
-              <p>
-                For <strong>$40</strong> you’ll receive a one-of-a-kind
-                snail-defecation trading card in a clear archival sleeve.
-                Stamped, signed and dated on the back. Your purchase helps
-                support the project. Checkout happens through Ko-fi so your
-                shipping details never touch this site.
+            <p>
+              For <strong>$40</strong> you’ll receive a one-of-a-kind
+              snail-defecation trading card in a clear archival sleeve.
+              Stamped, signed and dated on the back. Your purchase helps
+              support the project. Checkout happens through Ko-fi so your
+              shipping details never touch this site.
+            </p>
+            <a
+              class="support-cta"
+              href="https://ko-fi.com/s/48176b8cd3"
+              target="_blank"
+              rel="noopener"
+            >Get a card</a>
+            <noscript>
+              <p>JavaScript disabled? Buy it
+                <a href="https://ko-fi.com/s/48176b8cd3">directly on Ko-fi</a>.
               </p>
-              <a
-                class="kofi-btn"
-                href="https://ko-fi.com/s/48176b8cd3"
-                target="_blank"
-                rel="noopener"
-              >Get a card</a>
-              <noscript>
-                <p>JavaScript disabled? Buy it
-                  <a href="https://ko-fi.com/s/48176b8cd3">directly on Ko-fi</a>.
-                </p>
-              </noscript>
-            </div>
+            </noscript>
           </div>
         </div>
       </section>
-      <!-- end sections -->
+      <!-- /#support -->
     </div>
   </div>
 
 <script>
 /* -----------------------------------------------------------
-   Hash-based SPA with dynamic sizing
-   - Landing page uses no hash (mysnails.com)
-   - Header click → blanks the hash & updates URL to "/" without reload
-   - Keeps header/timer/nav consistent across tabs
-   - Ensures Home/Gallery/Support fit without scroll (desktop)
-   - Carousel loops, no transition animation (instant swap)
+  Never-Ending Snail Breeding Project — main script
+  - Hash-based routing (Notes, Gallery, Support)
+  - Header click clears hash so URL is just the domain
+  - Breeding timer
+  - Gallery carousel (no movement animation, no index text)
 ----------------------------------------------------------- */
 (() => {
   "use strict";
@@ -826,13 +711,6 @@ p{ margin-bottom:.75rem; }
   if ("scrollRestoration" in history) {
     history.scrollRestoration = "manual";
   }
-
-  const mainEl   = document.getElementById("main");
-  const masthead = document.querySelector(".masthead");
-  const sections = Array.from(document.querySelectorAll("section"));
-  const links    = Array.from(document.querySelectorAll("nav a"));
-  const headerLink = document.querySelector(".header-link");
-  const validIds = ["home", "notes", "gallery", "support"];
 
   /* Timer */
   const startedAt = new Date("2019-06-17T00:32:00-04:00");
@@ -851,78 +729,119 @@ p{ margin-bottom:.75rem; }
       `${yrs}y ${mos}m ${days}d ${h}h ${m}m ${s}s ${String(ms).padStart(3,"0")}ms`;
   }
 
-  /* Compute available height below masthead for active section content */
-  function computeAvailHeight(){
-    const active = sections.find(s => s.classList.contains("active")) || sections[0];
-    const styles = getComputedStyle(active);
-    const padTop = parseFloat(styles.paddingTop) || 0;
-    const padBottom = parseFloat(styles.paddingBottom) || 0;
-    const avail = Math.max(0, mainEl.clientHeight - masthead.offsetHeight - padTop - padBottom);
-    // Set CSS var on the main container so sections can size to fit
-    mainEl.style.setProperty("--avail-h", avail + "px");
-  }
+  /* Router */
+  const mainEl   = document.getElementById("main");
+  const sections = Array.from(document.querySelectorAll("section"));
+  const links    = Array.from(document.querySelectorAll("nav a"));
+  const validIds = ["home","notes","gallery","support"];
 
-  /* Simple hash router (empty or unknown hash = home) */
   function showSection(){
-    const hash = location.hash.slice(1);
-    const id = validIds.includes(hash) ? hash : "home";
+    const id = validIds.includes(location.hash.slice(1))
+      ? location.hash.slice(1)
+      : "home";
 
     sections.forEach(sec => sec.classList.toggle("active", sec.id === id));
-    links.forEach(a  => a.classList.toggle("active", a.getAttribute("href") === "#" + id));
-
-    mainEl.scrollTop = 0;
-    computeAvailHeight();
-
-    if (id === "gallery") initCarousel(); // idempotent
+    links.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + id));
+    mainEl.scrollTop = 0; // reset internal scroll for each view
   }
 
-  /* Header click → remove hash and keep SPA state on home without full reload */
-  if (headerLink){
-    headerLink.addEventListener("click", (e) => {
-      e.preventDefault();
-      // Update URL to root (no hash) without reloading
-      history.pushState(null, "", "/");
-      // Force "home" section
-      location.hash = ""; // clears hash; triggers hashchange to home in some browsers
-      showSection();      // ensure view updates immediately
+  window.addEventListener("hashchange", showSection);
+
+  /* Header → Home (clear the hash without reloading) */
+  document.getElementById("headerLink").addEventListener("click", (e) => {
+    e.preventDefault();
+    history.replaceState(null, "", location.pathname); // strip hash from URL
+    showSection(); // will default to "home"
+  });
+
+  /* Gallery data */
+  const galleryImages = [
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/centipede-can.jpg?v=1750887319704",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/dent.jpg?v=1750887458980",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-on-drawing.jpg?v=1750897919914",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/three-snails.jpg?v=1750897923520",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snails-paper-towel.jpg?v=1750898287227",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-hand.jpg?v=1750897934241",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snails-eating.jpg?v=1750897943757",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/cucumber-bite.jpg?v=1750898212499",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-container-early.jpg?v=1750897899686",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/magic-trick.jpg?v=1750964784789",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/tag-yourself.jpg?v=1750964781472",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-lecture.jpg?v=1750897949911",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-rave-1.jpg?v=1750897953207",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-rave-2.jpg?v=1750897957245",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-rave-3.jpg?v=1750897961519",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-ruler.jpg?v=1750898002013",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-paper.jpg?v=1750898004959",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-spiral.jpg?v=1750898017404",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-food.jpg?v=1750898038926",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-tanks.png?v=1751158324839",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-arm.png?v=1751158322167",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-shell-info.jpg?v=1750962831006",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-defecation-fingers.jpg?v=1750898010327",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-landscape.jpg?v=1750898021295",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-painting.jpg?v=1750898028668",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-portait-2.jpg?v=1750898043358",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-portraits.jpg?v=1750897997476",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/eggs.jpg?v=1750898215669",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-camille.jpg?v=1750962828016",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/baby-snail.jpg?v=1750962821621",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-with-defecation.jpg?v=1750962835030",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snails-canvas.jpg?v=1750962837668",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snails-in-hand.jpg?v=1750962840732",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-shell-painting.jpg?v=1750965692578",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-memorial.jpg?v=1750965689512",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/magic-trick-defecation.jpg?v=1750965724602",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/four-snails.jpg?v=1750965705188",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/three-baby-snails.jpg?v=1750965709226",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-stretch.jpg?v=1750965701543",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/fly-trap.png?v=1751158309522",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-tweet.png?v=1751309975738",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-bucket.png?v=1751313970472",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-face.png?v=1751313973890",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-minanimal.png?v=1751313976220",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-milk.png?v=1751313978849",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-carrots.png?v=1751313981270",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-shell-1.png?v=1751313984014",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-shell-2.png?v=1751313986255",
+    "https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-life.png?v=1751313989612"
+  ];
+
+  const stage = document.getElementById("galleryStage");
+  let slides = [];
+  let idx = 0;
+
+  function buildSlides(){
+    // create <img> slides once
+    const frag = document.createDocumentFragment();
+    galleryImages.forEach((src, i) => {
+      const img = new Image();
+      img.src = src;
+      img.alt = "Gallery image " + (i+1);
+      img.className = "gallery-slide" + (i===0 ? " active" : "");
+      frag.appendChild(img);
     });
+    // Insert before arrows
+    const prev = document.getElementById("prevBtn");
+    stage.insertBefore(frag, prev);
+    slides = Array.from(stage.querySelectorAll(".gallery-slide"));
   }
 
-  /* Carousel (idempotent init) */
-  let carouselReady = false;
-  function initCarousel(){
-    if (carouselReady) return;
-    const track = document.querySelector("#gallery .carousel-track");
-    if (!track) return;
-
-    const slides = Array.from(track.querySelectorAll(".slide"));
-    let index = 0;
-
-    function goTo(i){
-      index = (i + slides.length) % slides.length;
-      track.style.transform = `translateX(${-index * 100}%)`; // instant swap (no CSS transition)
-    }
-
-    const prevBtn = document.querySelector("#gallery .carousel-arrow.left");
-    const nextBtn = document.querySelector("#gallery .carousel-arrow.right");
-    prevBtn.addEventListener("click", () => goTo(index - 1));
-    nextBtn.addEventListener("click", () => goTo(index + 1));
-
-    goTo(0);
-    carouselReady = true;
+  function show(i){
+    idx = (i + slides.length) % slides.length;
+    slides.forEach((el, j) => el.classList.toggle("active", j === idx));
   }
+
+  document.getElementById("prevBtn").addEventListener("click", () => show(idx - 1));
+  document.getElementById("nextBtn").addEventListener("click", () => show(idx + 1));
 
   /* Boot */
   window.addEventListener("DOMContentLoaded", () => {
-    // Do NOT auto-append "#home"; empty hash is the landing page
+    buildSlides();
     showSection();
     updateTimer();
-    setInterval(updateTimer, 33); // ~30fps
+    setInterval(updateTimer, 1);
   });
-
-  window.addEventListener("hashchange", showSection);
-  window.addEventListener("resize", computeAvailHeight);
-  window.addEventListener("load", computeAvailHeight);
 })();
 </script>
 </body>
