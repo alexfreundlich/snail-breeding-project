@@ -18,23 +18,23 @@
 
 <style>
 :root{
-  --timer: #0066ff;
-  --accent: #ff7f00;
-  --font-base: "Rubik", Arial, sans-serif;
-  --font-timer: "Roboto", monospace;
+  --timer:#0066ff;
+  --accent:#ff7f00;
+  --font-base:"Rubik", Arial, sans-serif;
+  --font-timer:"Roboto", monospace;
 
-  /* Layout */
-  --top-offset: 1.5rem;            /* distance from top of viewport */
-  --page-max: 820px;               /* max width of the square */
-  --page-vw: 72vw;                 /* relative width of the square */
+  /* Layout sizing */
+  --top-offset:1.5rem;          /* distance from viewport top */
+  --page-max:820px;             /* max width of square */
+  --page-vw:72vw;               /* relative width of square */
 
-  /* Spacing harmonization */
-  --section-gap: 1.5rem;           /* space between tabs and first line of content */
-  --support-gap: 1.5rem;           /* horizontal gap between support image+title and description */
+  /* Section spacing */
+  --section-gap:1.5rem;         /* space between tabs and first line of content */
+  --support-gap:1.25rem;        /* gap between support columns */
 
-  /* Splash sizing */
-  --splash-max-w: 94%;             /* fit inside the home section without scrolling */
-  --splash-max-h: 94%;
+  /* Splash sizing (fits without scroll) */
+  --splash-max-w:94%;
+  --splash-max-h:94%;
 }
 
 *,
@@ -48,11 +48,11 @@ body{
   line-height:1.6;
   color:#1b1b1b;
   background:url("https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/MacBook%20Pro%2016_%20-%204.jpg?v=1750881277001")
-    center/cover fixed no-repeat;
+           center/cover fixed no-repeat;
 
   display:flex;
   justify-content:center;
-  align-items:flex-start;        /* push toward top */
+  align-items:flex-start;        /* near top */
   min-height:100vh;
   padding-top:var(--top-offset);
 }
@@ -66,29 +66,28 @@ body{
   box-shadow:0 0 30px rgba(0,0,0,0.25);
   display:flex;
   flex-direction:column;
-  overflow:hidden;               /* outer container doesn’t scroll */
+  overflow:hidden;               /* outer shell never scrolls */
   position:relative;
 }
 
-/* Internal scrolling region */
+/* Inner layout: header/timer/tabs + active section */
 #main{
   display:flex;
   flex-direction:column;
   flex:1;
-  min-height:0;                  /* critical for flex scrolling */
-  overflow:auto;                 /* scroll inside the square */
-  -webkit-overflow-scrolling:touch; /* iOS momentum scroll */
-  position:relative;
-  padding:2rem;                  /* inner content padding */
+  min-height:0;                  /* allows the section to size correctly */
+  overflow:hidden;               /* scrolling handled by the section itself */
+  padding:2rem;                  /* consistent inner padding */
 }
 
-/* Header image (click → home). No rounding. */
+/* Header image (click → home). Square corners */
 .header-img{
   max-width:300px;
   max-height:109px;
   object-fit:cover;
   margin-bottom:1rem;
   display:block;
+  border-radius:0;
 }
 
 /* Timer */
@@ -98,7 +97,7 @@ body{
   font-weight:500;
   letter-spacing:1px;
   color:var(--timer);
-  margin-bottom:0.75rem;
+  margin-bottom:.75rem;
 }
 
 /* Tabs */
@@ -107,7 +106,7 @@ nav{
   font-weight:500;
   display:flex;
   gap:3rem;
-  margin-bottom:0.25rem;
+  margin-bottom:.25rem;
 }
 nav a{
   color:#108010;
@@ -128,18 +127,29 @@ nav a::after{
 nav a:hover::after,
 nav a.active::after{ opacity:1; }
 
-/* Sections */
-section{ display:none; animation:fade .25s forwards; padding-top:var(--section-gap); }
-section.active{ display:block; }
-@keyframes fade{ from{opacity:0;} to{opacity:1;} }
+/* Sections: the active section fills remaining space and ALONE scrolls */
+section{
+  display:none;
+  padding-top:var(--section-gap);
+}
+section.active{
+  display:block;
+  flex:1;                        /* fill remaining height of square */
+  min-height:0;                  /* allow internal scrolling */
+  overflow:auto;                 /* scroll within the square */
+  -webkit-overflow-scrolling:touch;
+}
 
+/* Typography etc. */
 h3{ margin:1.25rem 0 .25rem; font-weight:500; }
 p{ margin-bottom:.75rem; }
 .date{ font-size:.85rem; color:#555; margin:1rem 0; display:block; }
 
-/* HOME: center the single combined splash image; no scroll needed */
+/* NOTES: remove extra top margin on first heading */
+#notes h3:first-of-type{ margin-top:0; }
+
+/* HOME: center the single combined splash image; no overflow */
 #home.active{
-  flex:1; min-height:0;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -155,16 +165,14 @@ p{ margin-bottom:.75rem; }
   max-height:var(--splash-max-h);
   width:auto; height:auto;
   object-fit:contain;
+  display:block;
 }
 
-/* NOTES: remove extra top margin on first heading */
-#notes h3:first-of-type{ margin-top:0; }
-
-/* GALLERY: non-animated carousel (no counter text) */
+/* GALLERY: fixed stage inside the section; slides sized to fit without scroll */
 .gallery-stage{
   position:relative;
   width:100%;
-  height:calc(100% - var(--section-gap)); /* stay within section without scrolling */
+  height:100%;                   /* fill the section’s available height */
   display:flex;
   align-items:center;
   justify-content:center;
@@ -173,12 +181,14 @@ p{ margin-bottom:.75rem; }
 .gallery-slide{
   max-width:100%;
   max-height:100%;
-  object-fit:contain;
-  display:none;                  /* only the active image is shown */
+  width:auto;
+  height:auto;
+  object-fit:contain;            /* never crop or overflow */
+  display:none;                  /* only the active one shows */
 }
 .gallery-slide.active{ display:block; }
 
-/* arrows fixed (don’t move with images) */
+/* Arrows remain fixed position */
 .gallery-arrow{
   position:absolute;
   top:50%;
@@ -193,39 +203,37 @@ p{ margin-bottom:.75rem; }
 .gallery-prev{ left:.25rem; }
 .gallery-next{ right:.25rem; }
 
-/* SUPPORT layout */
+/* SUPPORT: two columns that fit without external scroll */
 #support .support-grid{
   display:grid;
-  grid-template-columns:auto 1fr;   /* image (and title above it) | description+button */
-  grid-auto-rows:auto;
+  grid-template-columns:auto 1fr;  /* left: title+image; right: description+CTA */
   column-gap:var(--support-gap);
   align-items:start;
 }
 
-/* Title aligned with image left edge; same top offset as other sections */
+/* Title above the image, left-aligned with it; keep in one line if possible */
 #support .support-title{
-  margin-top:0;                   /* the section provides top padding already */
+  margin-top:0;
   margin-bottom:.5rem;
-  white-space:nowrap;             /* keep it on one line */
+  white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
 }
 
-/* Image directly under the title, left-aligned with container */
+/* Image directly under the title; constrain so the whole section fits */
 #support .product-card{
-  width:auto;
-  height:auto;
+  width:auto; height:auto;
   max-width:100%;
-  max-height:44vh;               /* ensure the whole section fits without scrolling */
+  max-height:44vh;               /* keep everything within the square */
   object-fit:contain;            /* never stretch/warp */
-  margin:0;                      /* flush left */
+  border-radius:0;
 }
 
-/* Right column: description + CTA bottom-aligned to image */
+/* Right column: bottom-align description+CTA to the image height */
 #support .support-right{
   display:flex;
   flex-direction:column;
-  justify-content:flex-end;      /* bottom-align to image height */
+  justify-content:flex-end;
 }
 #support .support-cta{
   display:inline-block;
@@ -240,7 +248,7 @@ p{ margin-bottom:.75rem; }
   width:auto;                    /* don’t stretch */
 }
 
-/* Images everywhere are square-cornered */
+/* Global: no rounded corners for any images */
 img{ border-radius:0; }
 
 /* ---------------------------
@@ -252,9 +260,7 @@ img{ border-radius:0; }
     width:94vw;
     aspect-ratio:1/1;
   }
-  #main{
-    padding:1rem;
-  }
+  #main{ padding:1rem; }
   .header-img{
     max-width:180px;
     max-height:66px;
@@ -269,12 +275,12 @@ img{ border-radius:0; }
     gap:1.25rem;
   }
   :root{
-    --section-gap: 1rem;
-    --support-gap: 1rem;
-    --splash-max-w: 96%;
-    --splash-max-h: 96%;
+    --section-gap:1rem;
+    --support-gap:1rem;
+    --splash-max-w:96%;
+    --splash-max-h:96%;
   }
-  /* Support stacks tighter but keeps columns if space allows */
+  /* Slightly lower support image cap on small screens to avoid scroll */
   #support .product-card{ max-height:38vh; }
 }
 </style>
@@ -299,7 +305,7 @@ img{ border-radius:0; }
         <a href="#support" data-target="support">Support</a>
       </nav>
 
-      <!-- HOME: new combined splash image (no separate badge logic) -->
+      <!-- HOME: combined splash image -->
       <section id="home" class="active">
         <div class="splash-wrap">
           <img class="splash-single" src="assets/Snail-Splash.png" alt="Snail splash with badge combined">
@@ -703,7 +709,7 @@ img{ border-radius:0; }
   - Hash-based routing (Notes, Gallery, Support)
   - Header click clears hash so URL is just the domain
   - Breeding timer
-  - Gallery carousel (no movement animation, no index text)
+  - Gallery carousel (no animation, no index text)
 ----------------------------------------------------------- */
 (() => {
   "use strict";
@@ -730,7 +736,6 @@ img{ border-radius:0; }
   }
 
   /* Router */
-  const mainEl   = document.getElementById("main");
   const sections = Array.from(document.querySelectorAll("section"));
   const links    = Array.from(document.querySelectorAll("nav a"));
   const validIds = ["home","notes","gallery","support"];
@@ -742,7 +747,6 @@ img{ border-radius:0; }
 
     sections.forEach(sec => sec.classList.toggle("active", sec.id === id));
     links.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + id));
-    mainEl.scrollTop = 0; // reset internal scroll for each view
   }
 
   window.addEventListener("hashchange", showSection);
@@ -750,8 +754,8 @@ img{ border-radius:0; }
   /* Header → Home (clear the hash without reloading) */
   document.getElementById("headerLink").addEventListener("click", (e) => {
     e.preventDefault();
-    history.replaceState(null, "", location.pathname); // strip hash from URL
-    showSection(); // will default to "home"
+    history.replaceState(null, "", location.pathname); // strip hash
+    showSection();                                     // default to home
   });
 
   /* Gallery data */
@@ -812,7 +816,6 @@ img{ border-radius:0; }
   let idx = 0;
 
   function buildSlides(){
-    // create <img> slides once
     const frag = document.createDocumentFragment();
     galleryImages.forEach((src, i) => {
       const img = new Image();
@@ -821,7 +824,6 @@ img{ border-radius:0; }
       img.className = "gallery-slide" + (i===0 ? " active" : "");
       frag.appendChild(img);
     });
-    // Insert before arrows
     const prev = document.getElementById("prevBtn");
     stage.insertBefore(frag, prev);
     slides = Array.from(stage.querySelectorAll(".gallery-slide"));
