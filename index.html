@@ -33,7 +33,7 @@
   --section-gap:1.5rem;             /* space between tabs and first line */
   --support-gap:1.25rem;            /* gap between support columns */
 
-  /* Splash sizing (fits without scroll) — TWEAK THESE to change splash size */
+  /* Splash sizing (fits without scroll) — tweak these to change splash size */
   --splash-max-w:90%;
   --splash-max-h:90%;
 }
@@ -208,15 +208,23 @@ p{ margin-bottom:.75rem; }
 .gallery-prev{ left:.35rem; }
 .gallery-next{ right:.35rem; }
 
-/* SUPPORT: two columns that fit without external scroll */
+/* SUPPORT: grid stretches full section height; right col bottom-aligns */
 #support .support-grid{
   display:grid;
   grid-template-columns:auto 1fr;    /* left: title+image; right: description+CTA */
   column-gap:var(--support-gap);
   align-items:start;
+  height:100%;                       /* make the grid fill the section */
 }
 
-/* Title above image, left-aligned with it; single line preferred */
+/* Left column */
+#support .support-left{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;            /* ensure left content hugs left */
+}
+
+/* Title above image, single line preferred */
 #support .support-title{
   margin-top:0;
   margin-bottom:.5rem;
@@ -225,38 +233,40 @@ p{ margin-bottom:.75rem; }
   text-overflow:ellipsis;
 }
 
-/* Image directly under the title; constrain so the whole section fits */
+/* Image directly under the title; constrain to fit */
 #support .product-card{
   width:auto; height:auto;
   max-width:100%;
-  max-height:44vh;                 /* dial this if you need even more headroom */
-  object-fit:contain;              /* never stretch/warp */
+  max-height:44vh;                   /* adjust if you need even more headroom */
+  object-fit:contain;                /* never stretch/warp */
   border-radius:0;
 }
 
-/* Right column: bottom-align description+CTA to the image height */
+/* Right column stretches and bottom-aligns its content */
 #support .support-right{
+  align-self:stretch;                /* makes the column match the image/row height */
   display:flex;
   flex-direction:column;
-  justify-content:flex-end;        /* drop text/button to bottom */
+  justify-content:flex-end;          /* push description+button to the bottom */
+  align-items:flex-start;            /* prevent children from stretching wide */
 }
 #support .support-right p{
   margin:.25rem 0 .5rem;
 }
 
-/* Button: no stretching; equal padding left/right */
+/* Button: intrinsic width; symmetric padding */
 #support .support-cta{
   display:inline-flex;
   align-items:center;
   background:var(--accent);
   color:#fff;
   font-weight:600;
-  padding:.6rem 1.05rem;           /* symmetrical left/right padding */
+  padding:.6rem 1.05rem;             /* equal left/right padding */
   border-radius:.5rem;
   text-decoration:none;
   font-size:1rem;
   margin-top:.25rem;
-  width:auto;                      /* don’t stretch */
+  width:auto;                        /* no stretching */
   white-space:nowrap;
 }
 
