@@ -25,6 +25,12 @@
   /* Layout tuning */
   --page-max:820px;         /* max width of square on desktop */
   --page-vw:72vw;           /* responsive width of square on desktop */
+
+  /* 🔧 Splash badge controls — Tweak these to adjust size/position */
+  --badge-size-desktop: 22%;    /* make smaller by lowering this % (e.g., 20%) */
+  --badge-bottom-desktop: -8px; /* move lower with a more negative value (e.g., -14px) */
+  --badge-size-mobile: 26%;     /* mobile badge size */
+  --badge-bottom-mobile: -6px;  /* mobile vertical offset */
 }
 
 *,
@@ -54,7 +60,6 @@ body{
   max-height:90vh;             /* never touches top/bottom of viewport */
   background:rgba(255,255,255,0.75);
   backdrop-filter:blur(4px);
-  /* no border, no radius per request */
   border:none;
   border-radius:0;
   box-shadow:0 0 30px rgba(0,0,0,0.25);
@@ -86,8 +91,7 @@ body{
   max-width:300px;
   max-height:109px;
   object-fit:cover;
-  /* remove rounded corners */
-  border-radius:0;
+  border-radius:0; /* no rounding */
   box-shadow:0 2px 6px rgba(0,0,0,0.2);
   margin-bottom:1rem;
   display:block;
@@ -131,14 +135,14 @@ nav a.active::after{ opacity:1; }
 /* Sections */
 section{
   display:none;
-  animation:fade .3s forwards;
+  animation:fade .001s forwards; /* effectively removing transition while keeping logic */
   padding-top:1rem;
 }
 section.active{
   display:block;
   padding-bottom:1rem;
 }
-@keyframes fade{ from{opacity:0} to{opacity:1} }
+@keyframes fade{ from{opacity:1} to{opacity:1} }
 
 h3{ margin:1.25rem 0 .25rem; font-weight:500; }
 p{ margin-bottom:.75rem; }
@@ -171,28 +175,26 @@ p{ margin-bottom:.75rem; }
 }
 .hero .badge{
   position:absolute;
-  left:0;                        /* overlap bottom-left */
-  bottom:0;
-  width:26%;                     /* tuned size; adjust if needed */
+  left:0;                        /* bottom-left overlay */
+  bottom:var(--badge-bottom-desktop);
+  width:var(--badge-size-desktop);
   max-width:180px;
   height:auto;
+  pointer-events:none;
 }
 
-/* NOTES — unmodified (may scroll inside #main as needed) */
-
-/* GALLERY — carousel (no page text, no scrolling) */
+/* GALLERY — carousel (no captions, no scrolling, no animation) */
 #gallery .gallery-wrap{
   width:100%;
-  height:var(--avail-h, 48vh);   /* fill remaining area under masthead */
+  height:var(--avail-h, 48vh);
   position:relative;
-  overflow:hidden;               /* hide everything outside viewport */
+  overflow:hidden;
 }
-
 .carousel-track{
   display:flex;
   height:100%;
   width:100%;
-  transition:transform 350ms ease;
+  /* no transition = no animation; instant image change */
 }
 .slide{
   min-width:100%;
@@ -205,11 +207,8 @@ p{ margin-bottom:.75rem; }
   max-width:100%;
   max-height:100%;
   object-fit:contain;            /* never taller than viewport; no scroll */
-  /* remove rounded corners */
-  border-radius:0;
+  border-radius:0;               /* no rounding */
 }
-
-/* Static-position arrows (don’t move with images) */
 .carousel-arrow{
   position:absolute;
   top:50%;
@@ -230,7 +229,7 @@ p{ margin-bottom:.75rem; }
 .carousel-arrow.left{ left:8px; }
 .carousel-arrow.right{ right:8px; }
 
-/* SUPPORT — image LEFT; RIGHT column: title top, desc+button bottom (no scroll) */
+/* SUPPORT — two columns: LEFT = title + image; RIGHT = desc + button bottom-aligned */
 #support .support-grid{
   display:grid;
   grid-template-columns: 1.05fr 0.95fr; /* product a touch wider */
@@ -240,12 +239,18 @@ p{ margin-bottom:.75rem; }
   height:var(--avail-h, 48vh);          /* fill available space */
 }
 
-/* LEFT: image fills column height without distortion */
+/* LEFT column: title (one line) at top, image fills remaining without distortion */
 .support-left{
   min-width:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display:grid;
+  grid-template-rows:auto 1fr;  /* title + image */
+  align-items:start;
+}
+.support-title-left{
+  margin:0 0 .5rem 0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 .product-card{
   max-height:100%;
@@ -253,25 +258,15 @@ p{ margin-bottom:.75rem; }
   height:auto;
   width:auto;
   object-fit:contain;           /* no warp */
-  /* remove rounded corners */
   border-radius:0;
+  justify-self:center;
 }
 
-/* RIGHT: Title at top, description+button bottom aligned */
+/* RIGHT column: description + button bottom-aligned */
 .support-right{
   display:grid;
-  grid-template-rows: auto 1fr auto;   /* top spacer bottom */
+  grid-template-rows:1fr auto;  /* spacer + CTA block */
   min-width:0;
-}
-.support-title{
-  margin:0;                    /* flush with top */
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  align-self:start;
-}
-.support-spacer{
-  /* fills middle space to push CTA to bottom */
 }
 .support-cta{
   align-self:end;
@@ -286,15 +281,13 @@ p{ margin-bottom:.75rem; }
   border-radius:.5rem;
   text-decoration:none;
   font-size:1rem;
-  width:auto;                          /* no full-width stretching */
-  align-self:flex-start;               /* hug content, don’t stretch */
+  width:auto;                          /* hug content */
 }
 
 /* -----------------------------
    Mobile tweaks
    -----------------------------*/
 @media (max-width:600px){
-  /* Container taller on mobile to show more content, same 1.5rem top margin */
   .page{
     width:94vw;
     aspect-ratio:auto;
@@ -308,7 +301,7 @@ p{ margin-bottom:.75rem; }
     max-width:180px;
     max-height:66px;
     margin-bottom:.75rem;
-    border-radius:0; /* ensure no rounding on mobile too */
+    border-radius:0;
   }
   #timer{
     font-size:.8rem;
@@ -320,9 +313,11 @@ p{ margin-bottom:.75rem; }
     margin-bottom:.25rem;
   }
 
-  /* Use available height below masthead for hero, gallery, support */
   .hero{ height:var(--avail-h, 50vh); }
-  .hero .badge{ width:28%; max-width:140px; }
+  .hero .badge{
+    width:var(--badge-size-mobile);
+    bottom:var(--badge-bottom-mobile);
+  }
 
   #gallery .gallery-wrap{ height:var(--avail-h, 50vh); }
 
@@ -332,11 +327,8 @@ p{ margin-bottom:.75rem; }
     height:var(--avail-h, 60vh);
     gap:.75rem;
   }
-  .support-left{ order:2; }
-  .support-right{ order:1; grid-template-rows:auto auto; }
-  .support-title{ margin-bottom:.5rem; }
-  .support-spacer{ display:none; }
-  .support-cta{ align-self:start; }
+  .support-left{ order:1; }
+  .support-right{ order:2; }
 }
 </style>
 </head>
@@ -345,8 +337,8 @@ p{ margin-bottom:.75rem; }
     <div id="main">
       <!-- Masthead -->
       <div class="masthead">
-        <!-- Click header → go to #home (hash URLs) -->
-        <a class="header-link" href="#home" aria-label="Go to home">
+        <!-- Click header → go to root (no hash) -->
+        <a class="header-link" href="/" aria-label="Go to home">
           <img
             class="header-img"
             src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/Screenshot%202025-06-21%20at%201.56.54%E2%80%AFPM%201.png?v=1750882151549"
@@ -775,8 +767,9 @@ p{ margin-bottom:.75rem; }
 
       <section id="support">
         <div class="support-grid">
-          <!-- LEFT: Product image (fills column height without distortion) -->
+          <!-- LEFT: Title + Product image (fills column height without distortion) -->
           <div class="support-left">
+            <h3 class="support-title-left">Snail Defecation Trading Card (Sleeved)</h3>
             <img
               class="product-card"
               src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-landscape.png?v=1751232416767"
@@ -784,10 +777,9 @@ p{ margin-bottom:.75rem; }
             />
           </div>
 
-          <!-- RIGHT: Title at top; description + button bottom-aligned -->
+          <!-- RIGHT: Description + button bottom-aligned -->
           <div class="support-right">
-            <h3 class="support-title">Snail Defecation Trading Card (Sleeved)</h3>
-            <div class="support-spacer"></div>
+            <div></div> <!-- spacer -->
             <div class="support-cta">
               <p>
                 For <strong>$40</strong> you’ll receive a one-of-a-kind
@@ -817,11 +809,12 @@ p{ margin-bottom:.75rem; }
 
 <script>
 /* -----------------------------------------------------------
-   Hash-based SPA with dynamic sizing (hash URLs only)
-   - Header click → #home
+   Hash-based SPA with dynamic sizing
+   - Landing page uses no hash (mysnails.com)
+   - Header click → blanks the hash & updates URL to "/" without reload
    - Keeps header/timer/nav consistent across tabs
-   - Ensures Home/Gallery/Support fit without scroll
-   - Carousel with static-position arrows; loops around
+   - Ensures Home/Gallery/Support fit without scroll (desktop)
+   - Carousel loops, no transition animation (instant swap)
 ----------------------------------------------------------- */
 (() => {
   "use strict";
@@ -834,6 +827,7 @@ p{ margin-bottom:.75rem; }
   const masthead = document.querySelector(".masthead");
   const sections = Array.from(document.querySelectorAll("section"));
   const links    = Array.from(document.querySelectorAll("nav a"));
+  const headerLink = document.querySelector(".header-link");
   const validIds = ["home", "notes", "gallery", "support"];
 
   /* Timer */
@@ -864,21 +858,30 @@ p{ margin-bottom:.75rem; }
     mainEl.style.setProperty("--avail-h", avail + "px");
   }
 
-  /* Simple hash router */
+  /* Simple hash router (empty or unknown hash = home) */
   function showSection(){
-    const id = validIds.includes(location.hash.slice(1)) ? location.hash.slice(1) : "home";
+    const hash = location.hash.slice(1);
+    const id = validIds.includes(hash) ? hash : "home";
 
     sections.forEach(sec => sec.classList.toggle("active", sec.id === id));
     links.forEach(a  => a.classList.toggle("active", a.getAttribute("href") === "#" + id));
 
-    // Reset scroll so header/timer/nav location is visually identical across tabs
     mainEl.scrollTop = 0;
-
-    // Recompute available height for new section
     computeAvailHeight();
 
-    // If we just entered the gallery, ensure the track width is current
     if (id === "gallery") initCarousel(); // idempotent
+  }
+
+  /* Header click → remove hash and keep SPA state on home without full reload */
+  if (headerLink){
+    headerLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      // Update URL to root (no hash) without reloading
+      history.pushState(null, "", "/");
+      // Force "home" section
+      location.hash = ""; // clears hash; triggers hashchange to home in some browsers
+      showSection();      // ensure view updates immediately
+    });
   }
 
   /* Carousel (idempotent init) */
@@ -893,7 +896,7 @@ p{ margin-bottom:.75rem; }
 
     function goTo(i){
       index = (i + slides.length) % slides.length;
-      track.style.transform = `translateX(${-index * 100}%)`;
+      track.style.transform = `translateX(${-index * 100}%)`; // instant swap (no CSS transition)
     }
 
     const prevBtn = document.querySelector("#gallery .carousel-arrow.left");
@@ -907,7 +910,7 @@ p{ margin-bottom:.75rem; }
 
   /* Boot */
   window.addEventListener("DOMContentLoaded", () => {
-    if (!location.hash) location.replace("#home");
+    // Do NOT auto-append "#home"; empty hash is the landing page
     showSection();
     updateTimer();
     setInterval(updateTimer, 33); // ~30fps
