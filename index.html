@@ -32,11 +32,28 @@
   /* Section spacing */
   --section-pad:1rem;
 
-  /* Gallery sizing inside the square */
+  /* Gallery: arrow + inner padding */
   --gallery-arrow-size:2.4rem;
   --gallery-arrow-offset:0.35rem;
-  --gallery-hpad:calc(var(--gallery-arrow-size) + .5rem); /* keep image clear of arrows (left/right) */
+  --gallery-hpad:calc(var(--gallery-arrow-size) + .5rem); /* keep image clear of arrows (L/R) */
   --gallery-vpad:.5rem;                                    /* top/bottom breathing room */
+
+  /* Explicit image scales (EASY TO TWEAK) */
+  --splash-scale-desktop:0.82;     /* splash size as a fraction of the available area */
+  --gallery-scale-desktop:0.92;    /* gallery image scale within the stage */
+  --support-img-maxw-desktop:42%;  /* support image max width of the row */
+}
+
+/* Mobile overrides for image scales */
+@media (max-width:600px){
+  :root{
+    --splash-scale-desktop:0.88;     /* slight bump on mobile square */
+    --gallery-arrow-size:2rem;
+    --gallery-hpad:calc(2rem + .4rem);
+    --gallery-vpad:.4rem;
+    --gallery-scale-desktop:0.90;
+    --support-img-maxw-desktop:34vw; /* small fixed-ish visual width */
+  }
 }
 
 *,
@@ -63,7 +80,6 @@ body{
   width:clamp(320px, var(--page-vw), var(--page-max));
   aspect-ratio:1 / 1;  /* square on desktop */
   max-height:calc(100vh - var(--top-offset) - var(--bottom-offset));
-
   margin-top:var(--top-offset);
   margin-bottom:var(--bottom-offset);
 
@@ -139,7 +155,7 @@ nav a:hover::after, nav a.active::after{ opacity:1; }
 section{ display:none; animation:fade .25s forwards; padding-top:var(--section-pad); }
 section.active{ display:block; }
 
-/* HOME (splash with built-in badge) */
+/* HOME (splash uses combined PNG) */
 #home.active{
   flex:1;
   min-height:0;
@@ -155,9 +171,10 @@ section.active{ display:block; }
   justify-content:center;
 }
 .hero .splash{
-  /* fully visible inside the remaining square without scroll */
-  max-width:100%;
-  max-height:100%;
+  display:block;
+  /* Scale by explicit factor so it’s smaller than the container */
+  max-width:calc(var(--splash-scale-desktop) * 100%);
+  max-height:calc(var(--splash-scale-desktop) * 100%);
   width:auto;
   height:auto;
   object-fit:contain;
@@ -176,7 +193,7 @@ p{ margin-bottom:.75rem; }
 /* NOTES */
 #notes h3:first-of-type{ margin-top:0; }
 
-/* -------- GALLERY (carousel, static arrows, tight sizing) -------- */
+/* -------- GALLERY (carousel, static arrows, tightened image scale) -------- */
 #gallery.active{
   flex:1;
   min-height:0;
@@ -185,9 +202,7 @@ p{ margin-bottom:.75rem; }
 #gallery .carousel{
   position:relative;
   flex:1;
-  /* subtract the section's top padding so the stage truly fits */
   height:calc(100% - var(--section-pad));
-  /* pad on all sides so arrows never overlap the image and the image never “touches” the container edges */
   padding:var(--gallery-vpad) var(--gallery-hpad);
   display:flex;
   align-items:center;
@@ -203,11 +218,13 @@ p{ margin-bottom:.75rem; }
   overflow:hidden;
 }
 #gallery .stage img{
-  max-width:100%;
-  max-height:100%;
+  display:block;
+  /* Keep extra headroom so arrows never overlap and image never spills */
+  max-width:calc(var(--gallery-scale-desktop) * 100%);
+  max-height:calc(var(--gallery-scale-desktop) * 100%);
   width:auto;
   height:auto;
-  object-fit:contain; /* never spill below the container */
+  object-fit:contain;
 }
 
 /* Static arrows that do not move */
@@ -245,15 +262,15 @@ p{ margin-bottom:.75rem; }
   display:grid;
   grid-template-columns:auto 1fr;
   grid-template-areas: "img content";
-  column-gap:1rem;          /* tightened gap */
+  column-gap:1rem;
   align-items:end;          /* bottom align content with image */
 }
 
 /* Image larger than last build, still guaranteed to fit */
 #support img.product-card{
   grid-area:img;
-  max-width:min(500px, 48%);                  /* bigger, ~halfway between sizes */
-  max-height:calc(100% - 3.25rem);            /* account for title area */
+  max-width:var(--support-img-maxw-desktop);
+  max-height:calc(100% - 3.25rem);  /* leave room for title */
   width:auto;
   height:auto;
   object-fit:contain;
@@ -298,10 +315,6 @@ p{ margin-bottom:.75rem; }
   #timer{ font-size:.85rem; margin-bottom:.75rem; }
   nav{ font-size:1rem; gap:1.25rem; }
 
-  /* Gallery arrows a bit smaller; keep matching hpad so image never hits them */
-  #gallery .nav{ width:2rem; height:2rem; font-size:1.35rem; }
-  :root{ --gallery-hpad:calc(2rem + .4rem); --gallery-vpad:.4rem; }
-
   /* Support: title full width on its own line; below it, small image left, text right */
   #support .support-title{
     grid-area:title;
@@ -317,7 +330,7 @@ p{ margin-bottom:.75rem; }
     align-items:end;
   }
   #support img.product-card{
-    max-width:clamp(88px, 32vw, 160px);  /* prioritize text; no scroll */
+    max-width:var(--support-img-maxw-desktop); /* 34vw from :root override */
     max-height:100%;
   }
   .support-left a.support-cta{
@@ -473,7 +486,7 @@ p{ margin-bottom:.75rem; }
 <script>
 /* -----------------------------------------------------------
    Never-Ending Snail Breeding Project — main script
-   (hash-based routing; only Notes scrolls; gallery sizing)
+   (hash-based routing; only Notes scrolls; explicit image scales)
 ----------------------------------------------------------- */
 (() => {
   "use strict";
