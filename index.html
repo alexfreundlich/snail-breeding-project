@@ -23,44 +23,37 @@
   --font-base:"Rubik", Arial, sans-serif;
   --font-timer:"Roboto", monospace;
 
-  /* Square container sizing (desktop) */
-  --page-vw:72vw;          /* preferred square width as % of viewport width */
-  --page-max:820px;        /* hard cap on square width */
-  --top-offset:1.5rem;     /* space from top of window to square */
-  --bottom-offset:12vh;    /* breathing room below the square */
+  /* Square container (desktop) */
+  --page-vw:72vw;
+  --page-max:820px;
+  --top-offset:1.5rem;    /* container distance from top */
+  --bottom-offset:12vh;   /* breathing room below the square */
 
-  /* Section spacing */
-  --section-pad:1rem;
+  /* Internal layout spacing */
+  --chrome-pad:2rem;      /* padding around header/timer/nav block */
+  --section-pad:1rem;     /* top padding inside each section */
 
-  /* Gallery: arrow + inner padding */
+  /* Splash sizing (EASY TO TWEAK) */
+  --splash-scale-desktop:0.82;  /* % of available landing viewport */
+  --splash-scale-mobile:0.88;
+
+  /* Gallery */
   --gallery-arrow-size:2.4rem;
-  --gallery-arrow-offset:0.35rem;
-  --gallery-hpad:calc(var(--gallery-arrow-size) + .5rem); /* keep image clear of arrows (L/R) */
-  --gallery-vpad:.5rem;                                    /* top/bottom breathing room */
+  --gallery-arrow-offset:0.4rem;
+  --gallery-hpad:calc(var(--gallery-arrow-size) + .6rem); /* keep image clear of arrows (L/R) */
+  --gallery-vpad:.6rem;                                    /* top/bottom breathing */
+  --gallery-scale:0.92;                                    /* image scale within stage */
 
-  /* Explicit image scales (EASY TO TWEAK) */
-  --splash-scale-desktop:0.82;     /* splash size as a fraction of the available area */
-  --gallery-scale-desktop:0.92;    /* gallery image scale within the stage */
-  --support-img-maxw-desktop:42%;  /* support image max width of the row */
+  /* Support image width (desktop) */
+  --support-img-maxw:48%;
 }
 
-/* Mobile overrides for image scales */
-@media (max-width:600px){
-  :root{
-    --splash-scale-desktop:0.88;     /* slight bump on mobile square */
-    --gallery-arrow-size:2rem;
-    --gallery-hpad:calc(2rem + .4rem);
-    --gallery-vpad:.4rem;
-    --gallery-scale-desktop:0.90;
-    --support-img-maxw-desktop:34vw; /* small fixed-ish visual width */
-  }
-}
-
+/* -------- Base / layout -------- */
 *,
 *::before,
 *::after{ box-sizing:border-box; margin:0; padding:0; }
 
-html, body{ height:100%; overflow:hidden; } /* page itself never scrolls */
+html, body{ height:100%; overflow:hidden; } /* page never scrolls */
 
 body{
   font-family:var(--font-base);
@@ -71,14 +64,14 @@ body{
 
   display:flex;
   justify-content:center;
-  align-items:flex-start;   /* push toward top */
+  align-items:flex-start;
   min-height:100vh;
 }
 
-/* The translucent square container */
+/* Square container */
 .page{
   width:clamp(320px, var(--page-vw), var(--page-max));
-  aspect-ratio:1 / 1;  /* square on desktop */
+  aspect-ratio:1 / 1;
   max-height:calc(100vh - var(--top-offset) - var(--bottom-offset));
   margin-top:var(--top-offset);
   margin-bottom:var(--bottom-offset);
@@ -89,23 +82,28 @@ body{
 
   display:flex;
   flex-direction:column;
-  overflow:hidden;     /* internal scroller lives inside */
+  overflow:hidden;
   position:relative;
 }
 
-/* Internal scroller */
-#main{
-  flex:1;
-  min-height:0;
-  overflow-y:hidden;         /* default: no scrolling */
-  overflow-x:hidden;
-  padding:2rem;
-}
-#main.scrollable{
-  overflow-y:auto;           /* only when Notes is active */
+/* Fixed header/timer/nav "chrome" */
+.chrome{
+  padding:var(--chrome-pad);
+  padding-bottom:0.75rem;
+  flex:0 0 auto;
 }
 
-/* Header image (click to go Home) */
+/* Internal content viewport (sections render here) */
+#content{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-x:hidden;
+  overflow-y:hidden;        /* default: no scroll */
+  padding:0 var(--chrome-pad) var(--chrome-pad);
+}
+#content.scrollable{ overflow-y:auto; }
+
+/* Header image (click to go Landing) */
 .header-img{
   display:block;
   max-width:300px;
@@ -121,7 +119,7 @@ body{
   font-size:1rem;
   font-weight:500;
   letter-spacing:1px;
-  color:var(--timer);           /* back to blue */
+  color:var(--timer);
   margin-bottom:1.25rem;
 }
 
@@ -152,13 +150,12 @@ nav a::after{
 nav a:hover::after, nav a.active::after{ opacity:1; }
 
 /* Sections */
-section{ display:none; animation:fade .25s forwards; padding-top:var(--section-pad); }
+section{ display:none; padding-top:var(--section-pad); }
 section.active{ display:block; }
 
-/* HOME (splash uses combined PNG) */
-#home.active{
-  flex:1;
-  min-height:0;
+/* -------- LANDING (splash) -------- */
+#landing.active{
+  height:100%;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -172,32 +169,24 @@ section.active{ display:block; }
 }
 .hero .splash{
   display:block;
-  /* Scale by explicit factor so it’s smaller than the container */
   max-width:calc(var(--splash-scale-desktop) * 100%);
   max-height:calc(var(--splash-scale-desktop) * 100%);
-  width:auto;
-  height:auto;
-  object-fit:contain;
+  width:auto; height:auto; object-fit:contain;
 }
 
-/* Text */
+/* -------- NOTES (scrollable) -------- */
+#notes.active{ height:100%; }
+#notes article{ max-width:60ch; }
 h3{ margin:1.5rem 0 .25rem; font-weight:500; }
-p{ margin-bottom:.75rem; }
-.date{
-  display:block;
-  margin:1rem 0;
-  font-size:.85rem;
-  color:#555;
-}
-
-/* NOTES */
 #notes h3:first-of-type{ margin-top:0; }
+p{ margin-bottom:.75rem; }
+.date{ display:block; margin:1rem 0; font-size:.85rem; color:#555; }
 
-/* -------- GALLERY (carousel, static arrows, tightened image scale) -------- */
+/* -------- GALLERY (carousel) -------- */
 #gallery.active{
-  flex:1;
-  min-height:0;
+  height:100%;
   display:flex;
+  align-items:center;
 }
 #gallery .carousel{
   position:relative;
@@ -219,15 +208,12 @@ p{ margin-bottom:.75rem; }
 }
 #gallery .stage img{
   display:block;
-  /* Keep extra headroom so arrows never overlap and image never spills */
-  max-width:calc(var(--gallery-scale-desktop) * 100%);
-  max-height:calc(var(--gallery-scale-desktop) * 100%);
-  width:auto;
-  height:auto;
-  object-fit:contain;
+  max-width:calc(var(--gallery-scale) * 100%);
+  max-height:calc(var(--gallery-scale) * 100%);
+  width:auto; height:auto; object-fit:contain;
 }
 
-/* Static arrows that do not move */
+/* Arrows: perfectly centered */
 #gallery .nav{
   position:absolute;
   top:50%;
@@ -236,22 +222,20 @@ p{ margin-bottom:.75rem; }
   height:var(--gallery-arrow-size);
   border:none;
   border-radius:50%;
-  background:rgba(255,255,255,.88);
+  background:rgba(255,255,255,.9);
   box-shadow:0 2px 6px rgba(0,0,0,.18);
-  font-size:1.6rem;
-  line-height:var(--gallery-arrow-size);
-  text-align:center;
-  cursor:pointer;
-  user-select:none;
-  z-index:2; /* always above the image */
+  cursor:pointer; user-select:none; z-index:2;
+
+  display:flex; align-items:center; justify-content:center; /* centers the glyph */
+  font-size:1.35rem; line-height:1; padding:0;
 }
+#gallery .nav span{ display:block; line-height:1; }
 #gallery .nav.prev{ left:var(--gallery-arrow-offset); }
 #gallery .nav.next{ right:var(--gallery-arrow-offset); }
 
-/* -------- SUPPORT (desktop) -------- */
+/* -------- SUPPORT -------- */
 #support.active{
-  flex:1;
-  min-height:0;
+  height:100%;
   display:flex;
   flex-direction:column;
 }
@@ -265,86 +249,68 @@ p{ margin-bottom:.75rem; }
   column-gap:1rem;
   align-items:end;          /* bottom align content with image */
 }
-
-/* Image larger than last build, still guaranteed to fit */
 #support img.product-card{
   grid-area:img;
-  max-width:var(--support-img-maxw-desktop);
-  max-height:calc(100% - 3.25rem);  /* leave room for title */
-  width:auto;
-  height:auto;
-  object-fit:contain;
-  margin:0;
+  max-width:var(--support-img-maxw);
+  max-height:calc(100% - 3.25rem); /* room for title */
+  width:auto; height:auto; object-fit:contain; margin:0;
 }
-
-/* Description + button block */
-.support-left{
-  grid-area:content;
-  align-self:end;           /* bottom align with the image */
-}
+.support-left{ grid-area:content; align-self:end; }
 .support-left p{ margin-bottom:.6rem; }
-
-/* Non-stretch button */
 .support-cta{
-  display:inline-block;
-  background:var(--accent);
-  color:#fff;
-  font-weight:600;
-  padding:.7rem 1.15rem;
-  border-radius:.5rem;
-  text-decoration:none;
-  font-size:1rem;
-  white-space:nowrap;
-  width:auto;               /* never stretch */
+  display:inline-block; background:var(--accent); color:#fff;
+  font-weight:600; padding:.7rem 1.15rem; border-radius:.5rem;
+  text-decoration:none; font-size:1rem; white-space:nowrap; width:auto;
 }
 
-/* Small fade for section transitions */
-@keyframes fade{ from{opacity:0} to{opacity:1} }
-
-/* -------------------- MOBILE -------------------- */
+/* -------- Mobile -------- */
 @media (max-width:600px){
-  /* The square stays square but scaled to small screens */
   .page{
     width:min(94vw, calc(100vh - var(--top-offset) - 6vh));
     aspect-ratio:1 / 1;
     max-height:calc(100vh - var(--top-offset) - 6vh);
   }
-  #main{ padding:1rem; }
+  .chrome{ padding:1rem; padding-bottom:.75rem; }
+  #content{ padding:0 1rem 1rem; }
 
   .header-img{ max-width:180px; max-height:66px; margin-bottom:1rem; }
   #timer{ font-size:.85rem; margin-bottom:.75rem; }
   nav{ font-size:1rem; gap:1.25rem; }
 
-  /* Support: title full width on its own line; below it, small image left, text right */
+  .hero .splash{
+    max-width:calc(var(--splash-scale-mobile) * 100%);
+    max-height:calc(var(--splash-scale-mobile) * 100%);
+  }
+
+  #gallery .nav{
+    width:2rem; height:2rem; font-size:1.1rem;
+  }
+  :root{
+    --gallery-hpad:calc(2rem + .5rem);
+    --gallery-vpad:.5rem;
+    --gallery-scale:0.9;
+    --support-img-maxw:34%;
+  }
+
+  /* Support: title full width; below it image left, text right */
   #support .support-title{
-    grid-area:title;
-    margin:0 0 .5rem 0;
+    grid-area:title; margin:0 0 .5rem 0;
   }
   #support .support-grid{
     grid-template-areas:
       "title title"
       "img   content";
     grid-template-columns:auto 1fr;
-    row-gap:.75rem;
-    column-gap:.75rem;
-    align-items:end;
-  }
-  #support img.product-card{
-    max-width:var(--support-img-maxw-desktop); /* 34vw from :root override */
-    max-height:100%;
-  }
-  .support-left a.support-cta{
-    padding:.6rem 1rem;
-    font-size:.95rem;
+    row-gap:.75rem; column-gap:.75rem; align-items:end;
   }
 }
 </style>
 </head>
 <body>
   <div class="page">
-    <div id="main">
-      <!-- Header image – click to go Home (no # in URL) -->
-      <a href="#" id="home-link" aria-label="Go to home">
+    <!-- Fixed header/timer/nav (always visible) -->
+    <div class="chrome">
+      <a href="#" id="home-link" aria-label="Go to landing">
         <img
           class="header-img"
           src="https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/Screenshot%202025-06-21%20at%201.56.54%E2%80%AFPM%201.png?v=1750882151549"
@@ -359,11 +325,14 @@ p{ margin-bottom:.75rem; }
         <a href="#gallery" data-target="gallery">Gallery</a>
         <a href="#support" data-target="support">Support</a>
       </nav>
+    </div>
 
-      <!-- HOME (splash uses single combined PNG) -->
-      <section id="home" class="active">
+    <!-- INTERNAL VIEWPORT: only NOTES can scroll -->
+    <div id="content">
+      <!-- LANDING (no # in URL; shown when there is no hash) -->
+      <section id="landing" class="active">
         <div class="hero">
-          <img class="splash" src="assets/Snail-Splash.png" alt="Snail splash with 6 years badge">
+          <img class="splash" src="assets/Snail-Splash.png" alt="Snail splash">
         </div>
       </section>
 
@@ -439,14 +408,14 @@ p{ margin-bottom:.75rem; }
         </article>
       </section>
 
-      <!-- GALLERY (carousel) -->
+      <!-- GALLERY -->
       <section id="gallery">
         <div class="carousel">
-          <button class="nav prev" aria-label="Previous image">‹</button>
+          <button class="nav prev" aria-label="Previous image"><span aria-hidden="true">‹</span></button>
           <div class="stage">
             <img id="gallery-image" src="" alt="">
           </div>
-          <button class="nav next" aria-label="Next image">›</button>
+          <button class="nav next" aria-label="Next image"><span aria-hidden="true">›</span></button>
         </div>
       </section>
 
@@ -485,8 +454,8 @@ p{ margin-bottom:.75rem; }
 
 <script>
 /* -----------------------------------------------------------
-   Never-Ending Snail Breeding Project — main script
-   (hash-based routing; only Notes scrolls; explicit image scales)
+   Never-Ending Snail Breeding Project — script
+   (hash routing; only Notes scroll; image constraints; clean landing)
 ----------------------------------------------------------- */
 (() => {
   "use strict";
@@ -499,7 +468,6 @@ p{ margin-bottom:.75rem; }
   /* Timer */
   const startedAt = new Date("2019-06-17T00:32:00-04:00");
   const timerEl   = document.getElementById("timer");
-
   function updateTimer(){
     const diff = Date.now() - startedAt;
     const yrs  = Math.floor(diff / 31536000000);
@@ -514,40 +482,51 @@ p{ margin-bottom:.75rem; }
       `${yrs}y ${mos}m ${days}d ${h}h ${m}m ${s}s ${String(ms).padStart(3,"0")}ms`;
   }
 
-  /* Sections / routing */
-  const mainEl   = document.getElementById("main");
-  const sections = Array.from(document.querySelectorAll("section"));
-  const links    = Array.from(document.querySelectorAll("nav a"));
-  const validIds = ["home","notes","gallery","support"];
+  /* Elements */
+  const contentEl = document.getElementById("content");
+  const sections  = Array.from(document.querySelectorAll("#content > section"));
+  const links     = Array.from(document.querySelectorAll("nav a"));
 
-  function setScrollable(isScrollable){
-    mainEl.classList.toggle("scrollable", !!isScrollable);
-    if (!isScrollable) mainEl.scrollTop = 0;
+  const VALID = ["landing","notes","gallery","support"];
+
+  function setScrollable(on){
+    contentEl.classList.toggle("scrollable", !!on);
+    if (!on) contentEl.scrollTop = 0;
   }
 
   function showSection(){
-    const id = validIds.includes(location.hash.slice(1))
-      ? location.hash.slice(1)
-      : "home";
+    const hash = location.hash.replace("#","");
+    const id = VALID.includes(hash) ? hash : "landing";
 
     sections.forEach(sec => sec.classList.toggle("active", sec.id === id));
     links.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + id));
 
-    // Only Notes should scroll
+    // Only Notes scrolls internally
     setScrollable(id === "notes");
   }
 
-  /* iOS/Safari restore/reload bug: ensure internal scroller is at the top */
+  /* Landing from header (no hash in URL) */
+  const homeLink = document.getElementById("home-link");
+  function goLanding(e){
+    if (e) e.preventDefault();
+    history.replaceState(null, "", location.pathname + location.search); // clear hash
+    sections.forEach(sec => sec.classList.toggle("active", sec.id === "landing"));
+    links.forEach(a => a.classList.remove("active"));
+    setScrollable(false);
+  }
+  homeLink.addEventListener("click", goLanding);
+
+  /* Hard reset internal scroll (iOS restore quirks) */
   function hardResetScroll(){
-    mainEl.scrollTop = 0;
-    requestAnimationFrame(() => mainEl.scrollTop = 0);
-    setTimeout(() => { mainEl.scrollTop = 0; }, 60);
+    contentEl.scrollTop = 0;
+    requestAnimationFrame(() => contentEl.scrollTop = 0);
+    setTimeout(() => { contentEl.scrollTop = 0; }, 60);
   }
 
   /* -------- GALLERY CAROUSEL -------- */
-  const stageImg   = document.getElementById("gallery-image");
-  const prevBtn    = document.querySelector("#gallery .prev");
-  const nextBtn    = document.querySelector("#gallery .next");
+  const stageImg = document.getElementById("gallery-image");
+  const prevBtn  = document.querySelector("#gallery .prev");
+  const nextBtn  = document.querySelector("#gallery .next");
 
   const gallery = [
     {src:"https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/centipede-can.jpg?v=1750887319704", alt:"Giant Vietnamese Centipede in a clear acrylic paint can"},
@@ -600,29 +579,13 @@ p{ margin-bottom:.75rem; }
     {src:"https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-shell-2.png?v=1751313986255", alt:"A detail of another snail's shell"},
     {src:"https://cdn.glitch.global/9c426ba7-e6c6-43e1-b286-a8b271859b77/snail-life.png?v=1751313989612", alt:"A baby snail scaling on an adult snail"}
   ];
-
   let gIndex = 0;
-
   function renderGallery(){
     const item = gallery[gIndex];
-    stageImg.src = item.src;
-    stageImg.alt = item.alt || "";
+    stageImg.src = item.src; stageImg.alt = item.alt || "";
   }
   function prev(){ gIndex = (gIndex - 1 + gallery.length) % gallery.length; renderGallery(); }
   function next(){ gIndex = (gIndex + 1) % gallery.length; renderGallery(); }
-
-  /* Header → Home without # */
-  const homeLink = document.getElementById("home-link");
-  function goHome(e){
-    if (e) e.preventDefault();
-    // Remove hash from URL without reloading
-    history.replaceState(null, "", location.pathname + location.search);
-    // Show home section
-    sections.forEach(sec => sec.classList.toggle("active", sec.id === "home"));
-    links.forEach(a => a.classList.toggle("active", false));
-    setScrollable(false);
-  }
-  homeLink.addEventListener("click", goHome);
 
   /* Boot */
   window.addEventListener("DOMContentLoaded", () => {
@@ -630,17 +593,11 @@ p{ margin-bottom:.75rem; }
     updateTimer();
     setInterval(updateTimer, 1);
     renderGallery();
-    document.querySelector("#gallery .prev").addEventListener("click", prev);
-    document.querySelector("#gallery .next").addEventListener("click", next);
+    prevBtn.addEventListener("click", prev);
+    nextBtn.addEventListener("click", next);
   });
 
   window.addEventListener("hashchange", showSection);
-
-  function hardResetScroll(){
-    mainEl.scrollTop = 0;
-    requestAnimationFrame(() => mainEl.scrollTop = 0);
-    setTimeout(() => { mainEl.scrollTop = 0; }, 60);
-  }
   window.addEventListener("load", hardResetScroll);
   window.addEventListener("pageshow", (e) => { if (e.persisted) hardResetScroll(); });
 
