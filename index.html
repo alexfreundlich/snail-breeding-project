@@ -29,10 +29,14 @@
   --top-offset:1.5rem;     /* space from top of window to square */
   --bottom-offset:12vh;    /* breathing room below the square */
 
+  /* Section spacing */
+  --section-pad:1rem;
+
   /* Gallery sizing inside the square */
   --gallery-arrow-size:2.4rem;
   --gallery-arrow-offset:0.35rem;
-  --gallery-hpad:calc(var(--gallery-arrow-size) + .5rem); /* space so arrows never overlap image */
+  --gallery-hpad:calc(var(--gallery-arrow-size) + .5rem); /* keep image clear of arrows (left/right) */
+  --gallery-vpad:.5rem;                                    /* top/bottom breathing room */
 }
 
 *,
@@ -101,7 +105,7 @@ body{
   font-size:1rem;
   font-weight:500;
   letter-spacing:1px;
-  color:#1b1b1b; /* darker so it’s legible on all backgrounds */
+  color:var(--timer);           /* back to blue */
   margin-bottom:1.25rem;
 }
 
@@ -132,12 +136,11 @@ nav a::after{
 nav a:hover::after, nav a.active::after{ opacity:1; }
 
 /* Sections */
-section{ display:none; animation:fade .25s forwards; padding-top:1rem; }
+section{ display:none; animation:fade .25s forwards; padding-top:var(--section-pad); }
 section.active{ display:block; }
 
 /* HOME (splash with built-in badge) */
 #home.active{
-  /* Let Home consume remaining space so splash can scale to fit */
   flex:1;
   min-height:0;
   display:flex;
@@ -171,12 +174,9 @@ p{ margin-bottom:.75rem; }
 }
 
 /* NOTES */
-#notes.active{
-  /* Notes gets the scroller; content can be long */
-}
 #notes h3:first-of-type{ margin-top:0; }
 
-/* -------- GALLERY (carousel, static arrows) -------- */
+/* -------- GALLERY (carousel, static arrows, tight sizing) -------- */
 #gallery.active{
   flex:1;
   min-height:0;
@@ -185,9 +185,10 @@ p{ margin-bottom:.75rem; }
 #gallery .carousel{
   position:relative;
   flex:1;
-  height:100%;
-  padding-left:var(--gallery-hpad);
-  padding-right:var(--gallery-hpad);
+  /* subtract the section's top padding so the stage truly fits */
+  height:calc(100% - var(--section-pad));
+  /* pad on all sides so arrows never overlap the image and the image never “touches” the container edges */
+  padding:var(--gallery-vpad) var(--gallery-hpad);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -206,7 +207,7 @@ p{ margin-bottom:.75rem; }
   max-height:100%;
   width:auto;
   height:auto;
-  object-fit:contain;
+  object-fit:contain; /* never spill below the container */
 }
 
 /* Static arrows that do not move */
@@ -218,7 +219,7 @@ p{ margin-bottom:.75rem; }
   height:var(--gallery-arrow-size);
   border:none;
   border-radius:50%;
-  background:rgba(255,255,255,.85);
+  background:rgba(255,255,255,.88);
   box-shadow:0 2px 6px rgba(0,0,0,.18);
   font-size:1.6rem;
   line-height:var(--gallery-arrow-size);
@@ -244,15 +245,15 @@ p{ margin-bottom:.75rem; }
   display:grid;
   grid-template-columns:auto 1fr;
   grid-template-areas: "img content";
-  column-gap:1rem;          /* tightened */
+  column-gap:1rem;          /* tightened gap */
   align-items:end;          /* bottom align content with image */
 }
 
-/* Keep image pristine; bound by both width and height of the square */
+/* Image larger than last build, still guaranteed to fit */
 #support img.product-card{
   grid-area:img;
-  max-width:min(420px, 40%);
-  max-height:calc(100% - 3.25rem);   /* avoid pushing section taller */
+  max-width:min(500px, 48%);                  /* bigger, ~halfway between sizes */
+  max-height:calc(100% - 3.25rem);            /* account for title area */
   width:auto;
   height:auto;
   object-fit:contain;
@@ -262,7 +263,7 @@ p{ margin-bottom:.75rem; }
 /* Description + button block */
 .support-left{
   grid-area:content;
-  align-self:end;           /* bottom align */
+  align-self:end;           /* bottom align with the image */
 }
 .support-left p{ margin-bottom:.6rem; }
 
@@ -297,9 +298,9 @@ p{ margin-bottom:.75rem; }
   #timer{ font-size:.85rem; margin-bottom:.75rem; }
   nav{ font-size:1rem; gap:1.25rem; }
 
-  /* Gallery arrows a bit smaller */
+  /* Gallery arrows a bit smaller; keep matching hpad so image never hits them */
   #gallery .nav{ width:2rem; height:2rem; font-size:1.35rem; }
-  :root{ --gallery-hpad:calc(2rem + .4rem); } /* keep padding matched to mobile arrow size */
+  :root{ --gallery-hpad:calc(2rem + .4rem); --gallery-vpad:.4rem; }
 
   /* Support: title full width on its own line; below it, small image left, text right */
   #support .support-title{
@@ -316,7 +317,7 @@ p{ margin-bottom:.75rem; }
     align-items:end;
   }
   #support img.product-card{
-    max-width:clamp(88px, 28vw, 140px);  /* prioritize text; no horizontal/vertical scroll */
+    max-width:clamp(88px, 32vw, 160px);  /* prioritize text; no scroll */
     max-height:100%;
   }
   .support-left a.support-cta{
@@ -472,7 +473,7 @@ p{ margin-bottom:.75rem; }
 <script>
 /* -----------------------------------------------------------
    Never-Ending Snail Breeding Project — main script
-   (hash-based routing; only Notes scrolls; gallery carousel)
+   (hash-based routing; only Notes scrolls; gallery sizing)
 ----------------------------------------------------------- */
 (() => {
   "use strict";
@@ -612,20 +613,16 @@ p{ margin-bottom:.75rem; }
 
   /* Boot */
   window.addEventListener("DOMContentLoaded", () => {
-    // initial section
     showSection();
-    // timer
     updateTimer();
     setInterval(updateTimer, 1);
-    // gallery
     renderGallery();
-    prevBtn.addEventListener("click", prev);
-    nextBtn.addEventListener("click", next);
+    document.querySelector("#gallery .prev").addEventListener("click", prev);
+    document.querySelector("#gallery .next").addEventListener("click", next);
   });
 
   window.addEventListener("hashchange", showSection);
 
-  // Keep internal scroller at top on load/back-forward cache
   function hardResetScroll(){
     mainEl.scrollTop = 0;
     requestAnimationFrame(() => mainEl.scrollTop = 0);
