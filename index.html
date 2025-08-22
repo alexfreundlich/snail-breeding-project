@@ -23,18 +23,19 @@
   --font-base:"Rubik", Arial, sans-serif;
   --font-timer:"Roboto", monospace;
 
-  /* Layout sizing */
-  --top-offset:1.5rem;          /* distance from viewport top */
-  --page-max:820px;             /* max width of square */
-  --page-vw:72vw;               /* relative width of square */
+  /* Placement & sizing */
+  --top-offset:1.5rem;             /* distance from viewport top */
+  --bottom-offset:12vh;             /* bottom breathing room on desktop */
+  --page-max:820px;                 /* max width of square */
+  --page-vw:72vw;                   /* relative width of square */
 
   /* Section spacing */
-  --section-gap:1.5rem;         /* space between tabs and first line of content */
-  --support-gap:1.25rem;        /* gap between support columns */
+  --section-gap:1.5rem;             /* space between tabs and first line */
+  --support-gap:1.25rem;            /* gap between support columns */
 
-  /* Splash sizing (fits without scroll) */
-  --splash-max-w:94%;
-  --splash-max-h:94%;
+  /* Splash sizing (fits without scroll) — TWEAK THESE to change splash size */
+  --splash-max-w:90%;
+  --splash-max-h:90%;
 }
 
 *,
@@ -52,21 +53,24 @@ body{
 
   display:flex;
   justify-content:center;
-  align-items:flex-start;        /* near top */
+  align-items:flex-start;          /* near top */
   min-height:100vh;
   padding-top:var(--top-offset);
 }
 
-/* Square container near top */
+/* Square container near top with a bottom margin (never touches bottom) */
 .page{
-  width:clamp(320px, var(--page-vw), var(--page-max));
+  width: min(
+            clamp(320px, var(--page-vw), var(--page-max)),
+            calc(100vh - var(--top-offset) - var(--bottom-offset))
+         );
   aspect-ratio:1/1;
   background:rgba(255,255,255,0.75);
   backdrop-filter:blur(4px);
   box-shadow:0 0 30px rgba(0,0,0,0.25);
   display:flex;
   flex-direction:column;
-  overflow:hidden;               /* outer shell never scrolls */
+  overflow:hidden;                 /* outer shell never scrolls */
   position:relative;
 }
 
@@ -75,9 +79,9 @@ body{
   display:flex;
   flex-direction:column;
   flex:1;
-  min-height:0;                  /* allows the section to size correctly */
-  overflow:hidden;               /* scrolling handled by the section itself */
-  padding:2rem;                  /* consistent inner padding */
+  min-height:0;                    /* allows the section to size correctly */
+  overflow:hidden;                 /* scrolling handled by the section itself */
+  padding:2rem;                    /* consistent inner padding */
 }
 
 /* Header image (click → home). Square corners */
@@ -134,9 +138,9 @@ section{
 }
 section.active{
   display:block;
-  flex:1;                        /* fill remaining height of square */
-  min-height:0;                  /* allow internal scrolling */
-  overflow:auto;                 /* scroll within the square */
+  flex:1;                          /* fill remaining height of square */
+  min-height:0;                    /* allow internal scrolling */
+  overflow:auto;                   /* scroll within the square */
   -webkit-overflow-scrolling:touch;
 }
 
@@ -168,27 +172,28 @@ p{ margin-bottom:.75rem; }
   display:block;
 }
 
-/* GALLERY: fixed stage inside the section; slides sized to fit without scroll */
+/* GALLERY: fixed stage inside the section; slides never under arrows */
 .gallery-stage{
   position:relative;
   width:100%;
-  height:100%;                   /* fill the section’s available height */
+  height:100%;                     /* fill the section’s available height */
   display:flex;
   align-items:center;
   justify-content:center;
   overflow:hidden;
+  padding:0 2.5rem;                /* reserve space so arrows never overlap image */
 }
 .gallery-slide{
   max-width:100%;
   max-height:100%;
   width:auto;
   height:auto;
-  object-fit:contain;            /* never crop or overflow */
-  display:none;                  /* only the active one shows */
+  object-fit:contain;              /* never crop or overflow */
+  display:none;                    /* only the active one shows */
 }
 .gallery-slide.active{ display:block; }
 
-/* Arrows remain fixed position */
+/* Arrows stay fixed position */
 .gallery-arrow{
   position:absolute;
   top:50%;
@@ -200,18 +205,18 @@ p{ margin-bottom:.75rem; }
   user-select:none;
 }
 .gallery-arrow:hover{ background:#fff; }
-.gallery-prev{ left:.25rem; }
-.gallery-next{ right:.25rem; }
+.gallery-prev{ left:.35rem; }
+.gallery-next{ right:.35rem; }
 
 /* SUPPORT: two columns that fit without external scroll */
 #support .support-grid{
   display:grid;
-  grid-template-columns:auto 1fr;  /* left: title+image; right: description+CTA */
+  grid-template-columns:auto 1fr;    /* left: title+image; right: description+CTA */
   column-gap:var(--support-gap);
   align-items:start;
 }
 
-/* Title above the image, left-aligned with it; keep in one line if possible */
+/* Title above image, left-aligned with it; single line preferred */
 #support .support-title{
   margin-top:0;
   margin-bottom:.5rem;
@@ -224,8 +229,8 @@ p{ margin-bottom:.75rem; }
 #support .product-card{
   width:auto; height:auto;
   max-width:100%;
-  max-height:44vh;               /* keep everything within the square */
-  object-fit:contain;            /* never stretch/warp */
+  max-height:44vh;                 /* dial this if you need even more headroom */
+  object-fit:contain;              /* never stretch/warp */
   border-radius:0;
 }
 
@@ -233,22 +238,29 @@ p{ margin-bottom:.75rem; }
 #support .support-right{
   display:flex;
   flex-direction:column;
-  justify-content:flex-end;
+  justify-content:flex-end;        /* drop text/button to bottom */
 }
+#support .support-right p{
+  margin:.25rem 0 .5rem;
+}
+
+/* Button: no stretching; equal padding left/right */
 #support .support-cta{
-  display:inline-block;
+  display:inline-flex;
+  align-items:center;
   background:var(--accent);
   color:#fff;
   font-weight:600;
-  padding:.6rem 1.05rem;
+  padding:.6rem 1.05rem;           /* symmetrical left/right padding */
   border-radius:.5rem;
   text-decoration:none;
   font-size:1rem;
-  margin-top:.35rem;
-  width:auto;                    /* don’t stretch */
+  margin-top:.25rem;
+  width:auto;                      /* don’t stretch */
+  white-space:nowrap;
 }
 
-/* Global: no rounded corners for any images */
+/* Global: no rounded corners for images */
 img{ border-radius:0; }
 
 /* ---------------------------
@@ -257,7 +269,8 @@ img{ border-radius:0; }
    ---------------------------*/
 @media (max-width:600px){
   .page{
-    width:94vw;
+    /* Keep the square, but let it be a little smaller on short screens */
+    width: min(94vw, calc(100vh - var(--top-offset) - 6vh));
     aspect-ratio:1/1;
   }
   #main{ padding:1rem; }
@@ -277,10 +290,9 @@ img{ border-radius:0; }
   :root{
     --section-gap:1rem;
     --support-gap:1rem;
-    --splash-max-w:96%;
-    --splash-max-h:96%;
+    --splash-max-w:92%;
+    --splash-max-h:92%;
   }
-  /* Slightly lower support image cap on small screens to avoid scroll */
   #support .product-card{ max-height:38vh; }
 }
 </style>
@@ -288,7 +300,7 @@ img{ border-radius:0; }
 <body>
   <div class="page">
     <div id="main">
-      <!-- Header image (click to clear hash → URL is just domain) -->
+      <!-- Header image (click to clear hash → URL is just the domain) -->
       <a href="/" id="headerLink" aria-label="Go to home">
         <img
           class="header-img"
