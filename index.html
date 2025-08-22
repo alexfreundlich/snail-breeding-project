@@ -33,18 +33,18 @@
   --chrome-pad:2rem;      /* padding around header/timer/nav block */
   --section-pad:1rem;     /* top padding inside each section */
 
-  /* Splash sizing (EASY TO TWEAK) */
-  --splash-scale-desktop:0.75;  /* % of available landing viewport */
+  /* Splash sizing (kept your values) */
+  --splash-scale-desktop:0.75;
   --splash-scale-mobile:0.85;
 
   /* Gallery */
   --gallery-arrow-size:2.4rem;
   --gallery-arrow-offset:0.4rem;
-  --gallery-hpad:calc(var(--gallery-arrow-size) + .6rem); /* keep image clear of arrows (L/R) */
-  --gallery-vpad:.6rem;                                    /* top/bottom breathing */
-  --gallery-scale:0.92;                                    /* image scale within stage */
+  --gallery-hpad:calc(var(--gallery-arrow-size) + .6rem);
+  --gallery-vpad:.6rem;
+  --gallery-scale:0.92;
 
-  /* Support image width (desktop) */
+  /* Support image width (desktop — kept your value) */
   --support-img-maxw:70%;
 }
 
@@ -176,7 +176,9 @@ section.active{ display:block; }
 
 /* -------- NOTES (scrollable) -------- */
 #notes.active{ height:100%; }
-#notes article{ max-width:60ch; }
+/* Center on desktop to remove large right gutter */
+#notes article{ max-width:60ch; margin:0 auto; }
+
 h3{ margin:1.5rem 0 .25rem; font-weight:500; }
 #notes h3:first-of-type{ margin-top:0; }
 p{ margin-bottom:.75rem; }
@@ -239,23 +241,25 @@ p{ margin-bottom:.75rem; }
   display:flex;
   flex-direction:column;
 }
-.support-title{ margin:0 0 .75rem 0; }
+/* Match Notes h3→paragraph spacing under the support title */
+.support-title{ margin:0 0 .25rem 0; }
+
 .support-grid{
-  flex:1;
-  min-height:0;
+  /* sit right under the title, not bottom-aligned */
+  flex:0 0 auto;                 /* shrink-wrap to content height */
   display:grid;
   grid-template-columns:auto 1fr;
   grid-template-areas: "img content";
   column-gap:1rem;
-  align-items:end;          /* bottom align content with image */
+  align-items:start;             /* TOP align image and text */
 }
 #support img.product-card{
   grid-area:img;
   max-width:var(--support-img-maxw);
-  max-height:calc(100% - 3.25rem); /* room for title */
+  max-height:calc(100% - 3.25rem); /* safe headroom if container is tight */
   width:auto; height:auto; object-fit:contain; margin:0;
 }
-.support-left{ grid-area:content; align-self:end; }
+.support-left{ grid-area:content; align-self:start; }  /* TOP align text */
 .support-left p{ margin-bottom:.6rem; }
 .support-cta{
   display:inline-block; background:var(--accent); color:#fff;
@@ -282,6 +286,9 @@ p{ margin-bottom:.75rem; }
     max-height:calc(var(--splash-scale-mobile) * 100%);
   }
 
+  /* Let Notes text use full container width on mobile */
+  #notes article{ max-width:none; }
+
   #gallery .nav{
     width:2rem; height:2rem; font-size:1.1rem;
   }
@@ -292,16 +299,17 @@ p{ margin-bottom:.75rem; }
     --support-img-maxw:34%;
   }
 
-  /* Support: title full width; below it image left, text right */
+  /* Support: title full width; below it image left, text right; top-aligned */
   #support .support-title{
-    grid-area:title; margin:0 0 .5rem 0;
+    grid-area:title; margin:0 0 .25rem 0;  /* match Notes spacing */
   }
   #support .support-grid{
     grid-template-areas:
       "title title"
       "img   content";
     grid-template-columns:auto 1fr;
-    row-gap:.75rem; column-gap:.75rem; align-items:end;
+    row-gap:.75rem; column-gap:.75rem; align-items:start;
+    flex:0 0 auto;
   }
 }
 </style>
@@ -388,9 +396,6 @@ p{ margin-bottom:.75rem; }
           <p>
             Within its first year, Never-Ending Snail Breeding Project projected a vast horizon of biological speculation. I am nurturing the potential for genetic transformation through selective breeding and neglectful care, with the goal of hybridizing these snails with other mollusk species, particularly cephalopods like cuttlefish, aiming to produce an intelligent mosaic life form capable of novel interspecies communication. Future additions of other genetic materials—extraterrestrial or otherwise, depending on what discoveries are made over the next million years—are welcome. This is the furthest reaching vision for what this project could become. Initially framing the project as an “ambient mutation tank,” and casually irradiating the snails with ionizing waves from bananas and cosmic rays, I’ve since doubled down on the project’s mutative aims. During public presentations of the snails at the San Francisco Art Book Fair and Decentralized Web Camp, I discussed the slow mutation of the lineage in my studio, and felt that the subject had been sufficiently teased out. But after these lectures, I became fixated on hybridizing the snails and creating a new animal, guiding all changes within the genome I was nurturing towards this goal. Around this period, the project came to resemble an unfundable analog artificial intelligence startup with only a vague utility in mind.
           </p>
-          <p>
-            This hybrid monster would exhibit a unique intelligence enabling communication unlike anything currently observed in human to non-human communications. The evolutionary gap between vertebrates and invertebrates would be bridged through these charismatic new invertebrate representatives. I do believe in the creative transformation of life itself, not towards a Caligarian anthropomorphization of everything but rather towards a fundamental desire for greater difference and complexity. Not via the creation of, to use a contemporary example, a hyperproductive artificial intelligence limited by our knowledge until it naturally escapes that, but a creature with that escape as the aim. An actively collaborative, mutualistic symbiosis. I may be too attached to the monstrous description, as I neither imagine nor desire this species to be a disharmonic chimera. I prefer not to imprison this creature within the limits of my imagination. I’m trying to respect morphological designs I could never fathom in their emergence—to allow them to express themselves. When I use the term “monster,” I am borrowing it to describe the product of a truly creative and courageous play with the materials of life itself. If the snails are to be a path towards creating a new form of life through contemporary methods, the project will likely require the efforts and funds of multiple parties. But making the poetic case comes first.
-          </p>
           <h3>Conclusion</h3>
           <p>
             My lifetime with the snails will not coincide with the artwork the project seeks to realize. Even if that artwork is the alien hybrid monster, only over millions of years, if this lineage of snails remains unbroken through speciation or hybridization, would a point or points along this population’s evolutionary gradient become self-evident as an artwork. By this far-off future point, even if it comes within the next 10,000 years, “art” may be an extinct term. Our own species will have transformed into something else. It becomes unimaginable, beyond speculation. But the most crucial qualities of art will surely persist, its extra-dimensional qualities perceptible by an audience we don’t have words to describe. Whatever it is that replaces art might ring at the same frequency we’ve come to associate with what’s best about art. I must stress that this recurring vision is as susceptible to transformation as the genetic information of the snails themselves during the life of this project. Had I written this a year or two ago, I would have insisted I had no clear agenda in sight, that to force an agenda on this project would destroy it. Never-Ending Snail Breeding Project will exist for so long that it will outlive the many things I’ve thought about it over the years, including what I may think is its critical purchase in this text. Choosing a goal is as easy as writing it down, and keeping these snails alive is what concerns me most. Another goal will likely reveal itself in time.
@@ -460,10 +465,7 @@ p{ margin-bottom:.75rem; }
 (() => {
   "use strict";
 
-  /* Prevent browser from auto-restoring window scroll */
-  if ("scrollRestoration" in history) {
-    history.scrollRestoration = "manual";
-  }
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 
   /* Timer */
   const startedAt = new Date("2019-06-17T00:32:00-04:00");
@@ -516,7 +518,7 @@ p{ margin-bottom:.75rem; }
   }
   homeLink.addEventListener("click", goLanding);
 
-  /* Hard reset internal scroll (iOS restore quirks) */
+  /* iOS restore quirks */
   function hardResetScroll(){
     contentEl.scrollTop = 0;
     requestAnimationFrame(() => contentEl.scrollTop = 0);
