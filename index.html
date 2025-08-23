@@ -301,21 +301,30 @@ p{ margin-bottom:.75rem; }
     --gallery-hpad:calc(2rem + .5rem);
     --gallery-vpad:.5rem;
     --gallery-scale:0.9;
-    --support-img-maxw:34%;
+    --support-img-maxw:40%;
   }
 
   /* Support: title full width; below it image left, text right; top-aligned */
   #support .support-title{
-    grid-area:title; margin:0 0 .25rem 0;  /* match Notes spacing */
+    grid-area:title;
+    margin:0 0 .25rem 0;  /* match Notes spacing */
   }
   #support .support-grid{
     grid-template-areas:
       "title title"
       "img   content";
     grid-template-columns:auto 1fr;
-    row-gap:.75rem; column-gap:.75rem; align-items:start;
+    row-gap:.5rem;
+    column-gap:.75rem;
+    align-items:start;
     flex:0 0 auto;
   }
+  #support img.product-card{
+    max-height:30vh;
+  }
+  .support-left{ font-size:.95rem; line-height:1.45; }
+.support-left p{ margin-bottom:.5rem; }
+.support-cta{ padding:.6rem 1rem; font-size:.95rem; }
 }
 </style>
 </head>
