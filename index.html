@@ -47,7 +47,8 @@
   --gallery-vpad:.6rem;
   --gallery-scale:0.92;
 
-  /* Support image width (desktop) */
+  /* Support image sizing (desktop) */
+  --support-img-width:240px;   /* ← adjust this to grow/shrink the card image */
   --support-img-maxw:140%;
 }
 
@@ -265,9 +266,11 @@ p{ margin-bottom:.75rem; }
 }
 #support img.product-card{
   grid-area:img;
+  width:var(--support-img-width);       /* ← primary control for desktop size */
   max-width:var(--support-img-maxw);
-  max-height:calc(100% - 3.25rem);
-  width:auto; height:auto; object-fit:contain; margin:0;
+  height:auto;
+  object-fit:contain;
+  margin:0;
 }
 .support-left{ grid-area:content; }
 .support-left p{ margin-bottom:.6rem; }
@@ -333,7 +336,6 @@ p{ margin-bottom:.75rem; }
     max-width:100%;
     width:100%;
     height:auto;
-    max-height:none;
   }
   .support-left{ font-size:.95rem; line-height:1.45; }
   .support-left p{ margin-bottom:.5rem; }
@@ -400,6 +402,9 @@ p{ margin-bottom:.75rem; }
           </p>
           <p>
             On two occasions, the centipede was fed under questionable circumstances. Twice I sourced green anoles from a pet supply store in Elyria. The manager had me sign a document both times agreeing that the anoles would not be used to feed another animal. Within hours of each feeding, the centipede would leave behind a perfectly intact anole skeleton. One of these skeletons I mounted onto a painting with cyanoacrylate glue. On one occasion, the centipede itself was featured in a student exhibition. It was placed in front of a tree I had cut down inside a clear lidless paint can on a stool for observation by attendees. The maintenance and care of the centipede began to eclipse any other purpose I had envisioned for it in a way I did not yet fully understand. Much of this period consisted of observation. At times it felt like staring into a black hole. While on my way home to Los Angeles for the winter, the centipede died on the plane, marking an abrupt end to this particular exploration.
+          </p>
+          <p>
+            After this period with the centipede, I moved back in with my parents and prepared to buy a hatchling green anaconda, <em>Eunectes murinus</em>, from a breeder I had been following online named Meghan Kelley. Meghan came to my attention via a breeding project I was particularly interested in at the time, the Reach Out Reptiles’s Super Dwarf Reticulated Python project, which seeks to create a chihuahua-like, miniature version of the world’s longest snake species. The Reach Out Reptiles founder had collected a few of her anacondas. I put down the deposit and purchased the necessary starting materials: heat pads, a bespoke drawer-like snake enclosure, lighting, troughs. There was an exotic pet exposition in Anaheim where we planned the pickup. My priority in owning the snake was to create a sculpture using a non-functional but water-filled toilet with a complete female green anaconda defecation inside. This would be installed near the far wall of a space, with the other walls hosting mounted containers of various morphs of live baby snakes, each paired with a customized Starbucks drink. For example, a tall Pumpkin Cream Cold Brew with no ice, extra foam, and an extra shot of espresso paired with a baby rainbow boa, <em>Epicrates cenchria</em>, expressing an incomplete dominant Picasso Stripe gene. The sex specificity of the green anaconda hatchling I was going to buy put more pressure on the project, as the females are significantly larger than the males. I would also have to wait three to four years for the anaconda to reach sexual maturity, which was necessary for the sculpture I was after. Once the project was complete, the ten to twenty year logistical nightmare of owning the giant snake was supposed to “figure itself out.” On the freeway to Anaheim to pick up my selected anaconda, I texted the breeder that I was no longer interested, giving up my deposit and shelving the project.
           </p>
           <h3>Snails</h3>
           <p>
@@ -650,6 +655,7 @@ p{ margin-bottom:.75rem; }
     showSection();
     updateTimer();
     setInterval(updateTimer, 1);
+    renderGallery(); /* <-- fixes blank first image */
     document.querySelector("#gallery .prev").addEventListener("click", prev);
     document.querySelector("#gallery .next").addEventListener("click", next);
   });
