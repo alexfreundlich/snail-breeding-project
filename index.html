@@ -568,11 +568,19 @@ p{ margin-bottom:.75rem; }
   const VALID = ["landing","notes","gallery","support"];
   const isMobile = () => window.matchMedia("(max-width: 600px)").matches;
 
+  // --- Option B: smart scroll enabling ---
   function setScrollable(id){
-    const enable =
-      id === "notes" || (isMobile() && id === "support");
-    contentEl.classList.toggle("scrollable", enable);
-    if (!enable) contentEl.scrollTop = 0;
+    // Notes always scroll. Support scrolls on mobile or when it overflows.
+    requestAnimationFrame(() => {
+      const enableNotes = (id === "notes");
+      const enableSupportMobile = (id === "support" && isMobile());
+      const enableSupportOverflow =
+        (id === "support" && contentEl.scrollHeight > contentEl.clientHeight + 1);
+
+      const enable = enableNotes || enableSupportMobile || enableSupportOverflow;
+      contentEl.classList.toggle("scrollable", enable);
+      if (!enable) contentEl.scrollTop = 0;
+    });
   }
 
   function applyFrameMode(id){
@@ -591,8 +599,13 @@ p{ margin-bottom:.75rem; }
     sections.forEach(sec => sec.classList.toggle("active", sec.id === id));
     links.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + id));
 
-    setScrollable(id);
+    // Frame first, then decide if we need scroll (measured next frame)
     applyFrameMode(id);
+    setScrollable(id);
+  }
+
+  function getActiveId(){
+    return sections.find(s => s.classList.contains("active"))?.id || "landing";
   }
 
   /* Landing from header (no hash in URL) */
