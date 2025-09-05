@@ -82,14 +82,14 @@ body{
   display:flex;
   justify-content:center;
   align-items:flex-start;
-  min-height:100dvh; /* dvh for iOS toolbar changes */
+  min-height:100svh; /* dvh for iOS toolbar changes */
 }
 
 /* Square container */
 .page{
   width:clamp(320px, var(--page-vw), var(--page-max));
   aspect-ratio:1 / 1;
-  max-height:calc(100dvh - var(--top-offset) - var(--bottom-offset));
+  max-height:calc(100svh - var(--top-offset) - var(--bottom-offset));
   margin-top:var(--top-offset);
   margin-bottom:var(--bottom-offset);
 
@@ -303,9 +303,9 @@ p{ margin-bottom:.75rem; }
 /* -------- Mobile -------- */
 @media (max-width:600px){
   .page{
-    width:min(94vw, calc(100dvh - var(--top-offset) - 6vh));
+    width:min(94vw, calc(100svh - var(--top-offset) - 6vh));
     aspect-ratio:1 / 1;
-    max-height:calc(100dvh - var(--top-offset) - 6vh);
+    max-height:calc(100svh - var(--top-offset) - 6vh);
     margin-top:calc(var(--top-offset) + env(safe-area-inset-top));
   }
   .chrome{ padding:1rem; padding-bottom:.75rem; }
@@ -324,7 +324,7 @@ p{ margin-bottom:.75rem; }
   .page.tall-notes{
     width:94vw;
     aspect-ratio:auto;
-    height:calc(100dvh - (var(--top-offset) + env(safe-area-inset-top)));
+    height:calc(100svh - (var(--top-offset) + env(safe-area-inset-top)));
     max-height:none;
     margin-bottom:0;
   }
@@ -367,7 +367,7 @@ p{ margin-bottom:.75rem; }
   .page.tall-support{
     width:94vw;
     aspect-ratio:auto;
-    height:calc(100dvh - (var(--top-offset) + env(safe-area-inset-top) + 6vh));
+    height:calc(100svh - (var(--top-offset) + env(safe-area-inset-top) + 6vh));
     max-height:none;
     margin-bottom:6vh; /* same visual cushion you like */
   }
